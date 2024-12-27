@@ -1,0 +1,33 @@
+{% extends 'list.html' %}
+
+{% block thead %}
+  <tr>
+    <th scope="col">Nombre</th>
+    <th scope="col">Precio</th>
+    <th scope="col">Duracion</th>
+    <th scope="col">Activo</th>
+    <th scope="col">Acciones</th>
+  </tr>
+{% endblock %}
+{% block tbody %}
+  {% for plan in object_list %}
+    <tr>
+      <td scope="row">{{ plan.nombre }}</td>
+      <td>{{ plan.precio }}</td>
+      <td>{{ plan.duracion }}</td>
+      <td>
+        {% if plan.activo %}
+          <span class="badge bg-success">Si</span>
+        {% else %}
+          <span class="badge bg-danger">No</span>
+        {% endif %}
+      </td>
+      <td>
+        <div class="btn-group">
+          <a href="{% url 'plan_update' plan.id %}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+          <a href="{% url 'plan_delete' plan.id %}" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
+        </div>
+      </td>
+    </tr>
+  {% endfor %}
+{% endblock %}

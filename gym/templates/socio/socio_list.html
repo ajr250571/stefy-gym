@@ -1,0 +1,31 @@
+{% extends 'list.html' %}
+
+{% block thead %}
+  <tr>
+    <th scope="col">Nombre Completo</th>
+    <th scope="col">DNI</th>
+    <th scope="col">Activo</th>
+    <th scope="col">Acciones</th>
+  </tr>
+{% endblock %}
+{% block tbody %}
+  {% for socio in object_list %}
+    <tr>
+      <td scope="row">{{ socio.nombre_completo }}</td>
+      <td>{{ socio.dni }}</td>
+      <td>
+        {% if socio.activo %}
+          <span class="badge bg-success">Si</span>
+        {% else %}
+          <span class="badge bg-danger">No</span>
+        {% endif %}
+      </td>
+      <td>
+        <div class="btn-group">
+          <a href="{% url 'socio_update' socio.id %}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+          <a href="{% url 'socio_delete' socio.id %}" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
+        </div>
+      </td>
+    </tr>
+  {% endfor %}
+{% endblock %}

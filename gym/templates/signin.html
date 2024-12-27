@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <form method="post" action="">
+    {% if error %}
+      <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h5><i class="icon fas fa-ban"></i> Error!</h5>
+        {{ error }}
+      </div>
+    {% endif %}
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button class="btn btn-primary mt-4">Login</button>
+  </form>
+{% endblock %}

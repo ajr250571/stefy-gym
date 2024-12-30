@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h3>Socio</h3>
+  <p>{{ object.socio }} ({{ object.socio.dni }})</p>
+  <h3>Plan</h3>
+  <p>{{ object.plan }}</p>
+  <h3>Fecha Vencimiento</h3>
+  <p>{{ object.fecha_fin }}</p>
+  <h3>Vigente</h3>
+  <h3>
+    {% if object.vigente %}
+      <span class="badge bg-success display-1">Si</span>
+    {% else %}
+      <span class="badge bg-danger display-1">No</span>
+    {% endif %}
+  </h3>
+{% endblock %}

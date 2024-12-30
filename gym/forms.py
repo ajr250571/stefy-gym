@@ -1,6 +1,6 @@
 from django import forms
 
-from gym.models import Membresia, Plan, Socio
+from gym.models import Membresia, Plan, Socio, Pago
 
 
 class PlanForm(forms.ModelForm):
@@ -21,3 +21,10 @@ class MembresiaForm(forms.ModelForm):
     class Meta:
         model = Membresia
         fields = ['socio', 'plan', 'fecha_inicio', 'fecha_fin', 'estado']
+
+
+class PagoForm(forms.ModelForm):
+    class Meta:
+        model = Pago
+        fields = ['membresia', 'monto', 'fecha_pago',
+                  'fecha_vencimiento', 'estado', 'metodo_pago', 'comprobante_nro']

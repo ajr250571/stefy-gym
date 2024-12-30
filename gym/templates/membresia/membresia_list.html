@@ -3,9 +3,8 @@
 {% block thead %}
   <tr>
     <th scope="col">Socio</th>
-    <th scope="col">Plan</th>
-    <th scope="col">F.Inicio</th>
-    <th scope="col">Estado</th>
+    <th scope="col">Fecha fin</th>
+    <th scope="col">Vigente</th>
     <th scope="col">Acciones</th>
   </tr>
 {% endblock %}
@@ -13,21 +12,19 @@
   {% for membresia in object_list %}
     <tr>
       <td scope="row">{{ membresia.socio }}</td>
-      <td>{{ membresia.plan }}</td>
-      <td>{{ membresia.fecha_inicio }}</td>
+      <td>{{ membresia.fecha_fin }}</td>
       <td>
-        {% if membresia.estado == 'ACTIVA' %}
-          <span class="badge bg-success">Activa</span>
-        {% elif membresia.estado == 'VENCIDA' %}
-          <span class="badge bg-danger">Vencida</span>
+        {% if membresia.vigente %}
+          <span class="badge bg-success">Si</span>
         {% else %}
-          <span class="badge bg-warning">Cancelada</span>
+          <span class="badge bg-danger">No</span>
         {% endif %}
       </td>
       <td>
         <div class="btn-group">
           <a href="{% url 'membresia_update' membresia.id %}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
           <a href="{% url 'membresia_delete' membresia.id %}" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
+          <a href="{% url 'pago_membresia' membresia.id %}" class="btn btn-warning btn-sm"><i class="fas fa-money-bill"></i></a>
         </div>
       </td>
     </tr>

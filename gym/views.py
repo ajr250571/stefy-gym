@@ -1,14 +1,19 @@
 from ast import In
+from datetime import date
 from os import error
+from django.db.models.base import Model as Model
+from django.db.models.query import QuerySet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.urls import reverse_lazy
-from gym.models import Membresia, Plan, Socio
-from .forms import PlanForm, SocioForm, MembresiaForm
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView
+from gym.models import Membresia, Plan, Socio, Pago
+from .forms import PlanForm, SocioForm, MembresiaForm, PagoForm
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 
 def home(request):
@@ -16,7 +21,7 @@ def home(request):
 
 
 # Usuarios
-
+@login_required
 def signup(request):
     form = UserCreationForm()
     content = {
@@ -65,9 +70,10 @@ def signin(request):
 # Planes
 
 
-class planListView(ListView):
+class planListView(LoginRequiredMixin, ListView):
     model = Plan
     template_name = 'plan/plan_list.html'
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Listado de Planes'
@@ -77,11 +83,12 @@ class planListView(ListView):
         return super().get_context_data(**kwargs)
 
 
-class planCreateView(CreateView):
+class planCreateView(LoginRequiredMixin, CreateView):
     model = Plan
     form_class = PlanForm
     template_name = 'plan/plan_create.html'
     success_url = reverse_lazy('plan_list')
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Crear Plan'
@@ -90,11 +97,12 @@ class planCreateView(CreateView):
         return super().get_context_data(**kwargs)
 
 
-class planUpdateView(UpdateView):
+class planUpdateView(LoginRequiredMixin, UpdateView):
     model = Plan
     form_class = PlanForm
     template_name = 'plan/plan_create.html'
     success_url = reverse_lazy('plan_list')
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Editar Plan'
@@ -103,17 +111,19 @@ class planUpdateView(UpdateView):
         return super().get_context_data(**kwargs)
 
 
-class planDeleteView(DeleteView):
+class planDeleteView(LoginRequiredMixin, DeleteView):
     model = Plan
     template_name = 'confirm_delete.html'
     success_url = reverse_lazy('plan_list')
+    login_url = '/login/'
 
 
 # Socios
 
-class socioListView(ListView):
+class socioListView(LoginRequiredMixin, ListView):
     model = Socio
     template_name = 'socio/socio_list.html'
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Listado de Socios'
@@ -123,11 +133,12 @@ class socioListView(ListView):
         return super().get_context_data(**kwargs)
 
 
-class socioCreateView(CreateView):
+class socioCreateView(LoginRequiredMixin, CreateView):
     model = Socio
     form_class = SocioForm
     template_name = 'socio/socio_create.html'
     success_url = reverse_lazy('socio_list')
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Crear Socio'
@@ -136,11 +147,12 @@ class socioCreateView(CreateView):
         return super().get_context_data(**kwargs)
 
 
-class socioUpdateView(UpdateView):
+class socioUpdateView(LoginRequiredMixin, UpdateView):
     model = Socio
     form_class = SocioForm
     template_name = 'socio/socio_create.html'
     success_url = reverse_lazy('socio_list')
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Editar Socio'
@@ -149,10 +161,11 @@ class socioUpdateView(UpdateView):
         return super().get_context_data(**kwargs)
 
 
-class socioDeleteView(DeleteView):
+class socioDeleteView(LoginRequiredMixin, DeleteView):
     model = Socio
     template_name = 'confirm_delete.html'
     success_url = reverse_lazy('socio_list')
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         kwargs['cancel_url'] = reverse_lazy('socio_list')
@@ -161,9 +174,10 @@ class socioDeleteView(DeleteView):
 # Membresias
 
 
-class membresiaListView(ListView):
+class membresiaListView(LoginRequiredMixin, ListView):
     model = Membresia
     template_name = 'membresia/membresia_list.html'
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Listado de Membresias'
@@ -173,11 +187,12 @@ class membresiaListView(ListView):
         return super().get_context_data(**kwargs)
 
 
-class membresiaCreateView(CreateView):
+class membresiaCreateView(LoginRequiredMixin, CreateView):
     model = Membresia
     form_class = MembresiaForm
     template_name = 'membresia/membresia_create.html'
     success_url = reverse_lazy('membresia_list')
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Crear Membresia'
@@ -186,11 +201,12 @@ class membresiaCreateView(CreateView):
         return super().get_context_data(**kwargs)
 
 
-class membresiaUpdateView(UpdateView):
+class membresiaUpdateView(LoginRequiredMixin, UpdateView):
     model = Membresia
     form_class = MembresiaForm
     template_name = 'membresia/membresia_create.html'
     success_url = reverse_lazy('membresia_list')
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Editar Membresia'
@@ -199,11 +215,125 @@ class membresiaUpdateView(UpdateView):
         return super().get_context_data(**kwargs)
 
 
-class membresiaDeleteView(DeleteView):
+class membresiaDeleteView(LoginRequiredMixin, DeleteView):
     model = Membresia
     template_name = 'confirm_delete.html'
     success_url = reverse_lazy('membresia_list')
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         kwargs['cancel_url'] = reverse_lazy('membresia_list')
         return super().get_context_data(**kwargs)
+
+
+# Pagos
+
+class pagoListView(LoginRequiredMixin, ListView):
+    model = Pago
+    template_name = 'pago/pago_list.html'
+    login_url = '/login/'
+
+    def get_context_data(self, **kwargs):
+        kwargs['title'] = 'Listado de Pagos'
+        kwargs['create_url'] = reverse_lazy('pago_create')
+        kwargs['crumb_url'] = reverse_lazy('pago_list')
+        kwargs['crumb_name'] = 'Pagos'
+        return super().get_context_data(**kwargs)
+
+
+class pagoCreateView(LoginRequiredMixin, CreateView):
+    model = Pago
+    form_class = PagoForm
+    template_name = 'pago/pago_create.html'
+    success_url = reverse_lazy('pago_list')
+    login_url = '/login/'
+
+    def get_context_data(self, **kwargs):
+        kwargs['title'] = 'Crear Pago'
+        kwargs['crumb_url'] = reverse_lazy('pago_list')
+        kwargs['crumb_name'] = 'Pagos'
+        return super().get_context_data(**kwargs)
+
+
+class pagoMembresiaCreateView(LoginRequiredMixin, CreateView):
+    model = Pago
+    form_class = PagoForm
+    template_name = 'pago/pago_create.html'
+    success_url = reverse_lazy('pago_list')
+    login_url = '/login/'
+
+    def get_context_data(self, **kwargs):
+        kwargs['title'] = 'Crear Pago'
+        kwargs['crumb_url'] = reverse_lazy('pago_list')
+        kwargs['crumb_name'] = 'Pagos'
+        return super().get_context_data(**kwargs)
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['membresia'] = self.kwargs['pk']
+        membresia = Membresia.objects.get(pk=self.kwargs['pk'])
+        initial['monto'] = membresia.plan.precio
+        initial['fecha_vencimiento'] = membresia.fecha_fin
+        initial['fecha_pago'] = date.today()
+        initial['estado'] = 'PAGADO'
+        return initial
+
+
+class pagoUpdateView(LoginRequiredMixin, UpdateView):
+    model = Pago
+    form_class = PagoForm
+    template_name = 'pago/pago_create.html'
+    success_url = reverse_lazy('pago_list')
+    login_url = '/login/'
+
+    def get_context_data(self, **kwargs):
+        kwargs['title'] = 'Editar Pago'
+        kwargs['crumb_url'] = reverse_lazy('pago_list')
+        kwargs['crumb_name'] = 'Pagos'
+        return super().get_context_data(**kwargs)
+
+
+class pagoDeleteView(LoginRequiredMixin, DeleteView):
+    model = Pago
+    template_name = 'confirm_delete.html'
+    success_url = reverse_lazy('pago_list')
+    login_url = '/login/'
+
+    def get_context_data(self, **kwargs):
+        kwargs['cancel_url'] = reverse_lazy('pago_list')
+        return super().get_context_data(**kwargs)
+
+# Listar membresias vencidas
+
+
+class membresiaVencidaListView(LoginRequiredMixin, ListView):
+    model = Membresia
+    template_name = 'membresia/membresia_list.html'
+    login_url = '/login/'
+
+    def get_context_data(self, **kwargs):
+        kwargs['title'] = 'Listado de Membresias Vencidas'
+        kwargs['crumb_url'] = reverse_lazy('membresia_list')
+        kwargs['crumb_name'] = 'Membresias'
+        return super().get_context_data(**kwargs)
+
+    def get_queryset(self):
+        return Membresia.objects.filter(estado='VENCIDA')
+
+
+class membresiaDetailView(DetailView):
+    model = Membresia
+    template_name = 'membresia/membresia_detail.html'
+    login_url = '/login/'
+
+    def get_context_data(self, **kwargs):
+        kwargs['title'] = 'Detalle de Membresia'
+        kwargs['crumb_url'] = reverse_lazy('home')
+        kwargs['crumb_name'] = ''
+        return super().get_context_data(**kwargs)
+
+    def get_object(self, queryset=None):
+        dni = self.kwargs['dni']
+        membresia = Membresia.objects.get(socio__dni=dni)
+
+        return membresia

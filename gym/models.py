@@ -1,6 +1,10 @@
+from ast import arg
+from datetime import timedelta
 from tabnanny import verbose
+from typing import Iterable
 from django.db import models
 from django.utils import timezone
+from dateutil.relativedelta import relativedelta
 
 
 class Socio(models.Model):
@@ -32,6 +36,10 @@ class Plan(models.Model):
     descripcion = models.TextField(blank=True, null=True)
     activo = models.BooleanField(default=True)
 
+    def calcular_fecha_fin(self, fecha_inicio):
+        """Calcula la fecha de finalización basada en la duración del plan"""
+        return fecha_inicio + relativedelta(months=self.duracion)
+
     class Meta:
         verbose_name = 'Plan'
         verbose_name_plural = 'Planes'
@@ -47,21 +55,56 @@ class Membresia(models.Model):
         ('CANCELADA', 'Cancelada'),
     ]
 
-    socio = models.ForeignKey(
-        Socio, on_delete=models.CASCADE)
+    socio = models.OneToOneField(
+        Socio, on_delete=models.PROTECT, blank=False, null=False
+    )
     plan = models.ForeignKey(
-        Plan, on_delete=models.PROTECT)
+        Plan, on_delete=models.PROTECT, blank=False, null=False)
     fecha_inicio = models.DateField()
-    fecha_fin = models.DateField(blank=True, null=True)
+    fecha_fin = models.DateField()
     estado = models.CharField(max_length=10, choices=ESTADOS, default='ACTIVA')
     fecha_alta = models.DateTimeField(auto_now_add=True)
+
+    def dias_restantes(self):
+        """Retorna los días restantes de la membresía"""
+        if self.estado != 'ACTIVA':
+            return 0
+        return (self.fecha_fin - timezone.now().date()).days
+
+    def vigente(self):
+        """Verifica si la membresía está vigente"""
+        self.actualizar_estado()
+        self.save()
+        return self.estado == 'ACTIVA'
+
+    def actualizar_estado(self):
+        """Actualiza el estado de la membresía según la fecha"""
+        if self.fecha_fin < timezone.now().date():
+            self.estado = 'VENCIDA'
+
+    def inicializar_fecha_fin(self):
+        """Actualiza la fecha de finalización de la membresía"""
+        self.fecha_fin = self.plan.calcular_fecha_fin(self.fecha_inicio)
+
+    def actualizar_fecha_fin(self, nueva_fecha_fin):
+        """Actualiza la fecha de finalización de la membresía"""
+        self.fecha_fin = nueva_fecha_fin
+        self.save()
+
+    def save(self, *args, **kwargs):
+        if not self.pk:  # Si es una nueva membresia
+            self.inicializar_fecha_fin()
+
+        self.actualizar_estado()
+        return super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Membresia'
         verbose_name_plural = 'Membresias'
+        ordering = ['socio']
 
     def __str__(self):
-        return f"{self.socio} - {self.plan}"
+        return f"{self.socio} ({self.plan})"
 
 
 class Pago(models.Model):
@@ -70,15 +113,40 @@ class Pago(models.Model):
         ('PAGADO', 'Pagado'),
         ('VENCIDO', 'Vencido'),
     ]
-
-    socio = models.ForeignKey(Socio, on_delete=models.CASCADE)
+    METODO_PAGO = [
+        ('EFECTIVO', 'Efectivo'),
+        ('DEBITO', 'Débito'),
+        ('CREDITO', 'Crédito'),
+        ('TRANSFERENCIA', 'Transferencia'),
+    ]
+    membresia = models.ForeignKey(Membresia, on_delete=models.CASCADE)
     monto = models.DecimalField(max_digits=10, decimal_places=2)
-    fecha_pago = models.DateField(blank=True, null=True)
+    fecha_pago = models.DateField(default=timezone.now)
     fecha_vencimiento = models.DateField()
     estado = models.CharField(
         max_length=10, choices=ESTADOS, default='PENDIENTE')
-    metodo_pago = models.CharField(max_length=50, blank=True, null=True)
+    metodo_pago = models.CharField(
+        max_length=50, blank=True, null=True, choices=METODO_PAGO, default='EFECTIVO')
     comprobante_nro = models.CharField(max_length=50, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:  # si en un nuevo pago
+            self.fecha_vencimiento = self.membresia.fecha_fin
+            fecha_vencimiento = self.membresia.plan.calcular_fecha_fin(
+                self.fecha_vencimiento)
+            self.membresia.actualizar_fecha_fin(fecha_vencimiento)
+
+        if self.monto < self.membresia.plan.precio:
+            self.estado = 'PENDIENTE'
+        else:
+            self.estado = 'PAGADO'
+        if self.fecha_pago > self.fecha_vencimiento:
+            self.estado = 'VENCIDO'
+
+        return super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.membresia} - Pagó: {self.monto}"
 
     class Meta:
         verbose_name = 'Pago'

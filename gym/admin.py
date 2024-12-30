@@ -19,8 +19,14 @@ class PlanAdmin(admin.ModelAdmin):
 
 @admin.register(Membresia)
 class MembresiaAdmin(admin.ModelAdmin):
-    list_display = ('socio', 'plan', 'fecha_inicio', 'fecha_fin', 'estado')
+    list_display = ('socio', 'plan', 'fecha_inicio',
+                    'fecha_fin', 'estado', 'vigente')
     ordering = ('socio',)
 
 
-admin.site.register(Pago)
+@admin.register(Pago)
+class PagoAdmin(admin.ModelAdmin):
+    list_display = ('membresia', 'monto', 'fecha_pago',
+                    'fecha_vencimiento', 'estado', 'metodo_pago')
+    list_filter = ('membresia',)
+    ordering = ('membresia',)

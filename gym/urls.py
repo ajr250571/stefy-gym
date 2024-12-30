@@ -30,4 +30,18 @@ urlpatterns = [
          membresiaUpdateView.as_view(), name='membresia_update'),
     path('membresia/delete/<int:pk>',
          membresiaDeleteView.as_view(), name='membresia_delete'),
+
+    path('pago/list/', pagoListView.as_view(), name='pago_list'),
+    path('pago/create/', pagoCreateView.as_view(), name='pago_create'),
+    path('pago/update/<int:pk>', pagoUpdateView.as_view(), name='pago_update'),
+    path('pago/delete/<int:pk>', pagoDeleteView.as_view(), name='pago_delete'),
+
+    path('vencida/list/', membresiaVencidaListView.as_view(),
+         name='membresia_vencida_list'),
+
+    path('pago_membresia/<int:pk>',
+         pagoMembresiaCreateView.as_view(), name='pago_membresia'),
+
+    path('membresia/<str:dni>', membresiaDetailView.as_view(),
+         name='membresia_detail'),
 ]

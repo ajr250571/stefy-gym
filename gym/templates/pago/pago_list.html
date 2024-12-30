@@ -1,0 +1,34 @@
+{% extends 'list.html' %}
+
+{% block thead %}
+  <tr>
+    <th scope="col">Membresia</th>
+    <th scope="col">F.Pago</th>
+    <th scope="col">Estado</th>
+    <th scope="col">Acciones</th>
+  </tr>
+{% endblock %}
+{% block tbody %}
+  {% for pago in object_list %}
+    <tr>
+      <td scope="row">{{ pago.membresia }}</td>
+      <td>{{ pago.fecha_pago }}</td>
+      <td>
+        {% if pago.estado == 'PAGADO' %}
+          <span class="badge bg-success">Pagada</span>
+        {% elif pago.estado == 'PENDIENTE' %}
+          <span class="badge bg-danger">Pendiente</span>
+        {% else %}
+          <span class="badge bg-warning">Vencida</span>
+        {% endif %}
+      </td>
+
+      <td>
+        <div class="btn-group">
+          <a href="{% url 'pago_update' pago.id %}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+          <a href="{% url 'pago_delete' pago.id %}" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
+        </div>
+      </td>
+    </tr>
+  {% endfor %}
+{% endblock %}

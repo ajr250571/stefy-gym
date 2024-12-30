@@ -24,10 +24,10 @@
 
     <!-- SidebarSearch Form -->
     <div class="form-inline">
-      <div class="input-group" data-widget="sidebar-search">
-        <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search" />
+      <div class="input-group">
+        <input class="form-control form-control-sidebar" id="search" type="search" placeholder="Search" aria-label="Search" />
         <div class="input-group-append">
-          <button class="btn btn-sidebar"><i class="fas fa-search fa-fw"></i></button>
+          <a id="enlace" href="#" class="btn btn-sidebar"><i class="fas fa-search fa-fw"></i></a>
         </div>
       </div>
     </div>
@@ -36,40 +36,28 @@
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
         <li class="nav-item">
-          <a href="#" class="nav-link active">
-            <i class="nav-icon fas fa-tachometer-alt"></i>
-            <p>
-              Maestros
-              <i class="right fas fa-angle-left"></i>
-              <span class="badge badge-warning right">M</span>
-            </p>
+          <a href="{% url 'socio_list' %}" class="nav-link">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Socios</p>
           </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="{% url 'socio_list' %}" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Socios</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{% url 'plan_list' %}" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Planes</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{% url 'membresia_list' %}" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Membresias</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Pagos</p>
-              </a>
-            </li>
-          </ul>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'plan_list' %}" class="nav-link">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Planes</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'membresia_list' %}" class="nav-link">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Membresias</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'pago_list' %}" class="nav-link">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Pagos</p>
+          </a>
         </li>
         <li class="nav-item menu-open">
           <a href="#" class="nav-link active">
@@ -82,9 +70,9 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{% url 'membresia_vencida_list' %}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Morosos</p>
+                <p>Membresias Vencidas</p>
               </a>
             </li>
           </ul>
@@ -95,3 +83,15 @@
   </div>
   <!-- /.sidebar -->
 </aside>
+
+{% block extrajs %}
+  <script>
+    const input = document.getElementById('search')
+    const enlace = document.getElementById('enlace')
+    
+    input.addEventListener('input', () => {
+      const valor = input.value
+      enlace.href = `/membresia/${valor}` // Ajusta la URL según tu configuración de Django
+    })
+  </script>
+{% endblock %}

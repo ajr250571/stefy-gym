@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  <h3>DNI</h3>
+  <h2>{{ object.socio.dni }}</h2>
   <h3>Socio</h3>
-  <p>{{ object.socio }} ({{ object.socio.dni }})</p>
+  <p>{{ object.socio }}</p>
   <h3>Plan</h3>
   <p>{{ object.plan }}</p>
   <h3>Fecha Vencimiento</h3>

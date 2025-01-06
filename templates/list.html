@@ -1,8 +1,14 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extracss %}
+  <link rel="stylesheet" href="{% static 'lib/datatables/css/dataTables.bootstrap4.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'lib/datatables/plugins/responsive-2.2.3/css/responsive.bootstrap4.min.css' %}" />
+{% endblock %}
 
 {% block content %}
   <div class="table-responsive">
-    <table class="table table-primary">
+    <table id="datos" class="table table-primary">
       <thead>
         {% block thead %}
 
@@ -16,4 +22,63 @@
     </table>
     <a href="{{ create_url }}" class="btn btn-primary">Agregar</a>
   </div>
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{% static 'lib/datatables/js/jquery.dataTables.js' %}"></script>
+  <script src="{% static 'lib/datatables/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'lib/datatables/plugins/responsive-2.2.3/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'lib/datatables/plugins/responsive-2.2.3/js/responsive.bootstrap4.min.js' %}"></script>
+  <script>
+    $(function () {
+      $('#datos').DataTable({
+        responsive: true,
+        autoWidth: false,
+        language: {
+          url: "{% static '/lib/datatables/spanish.txt' %}"
+        }
+      })
+    })
+  </script>
+
+  {% comment %}
+  <!-- DataTables & Plugins -->
+  <script src="{% url '/lib/adminlte/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% url '/lib/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% url '/lib/adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% url '/lib/adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+  <script src="{% url '/lib/adminlte/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+  <script src="{% url '/lib/adminlte/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+  <script src="{% url '/lib/adminlte/plugins/jszip/jszip.min.js' %}"></script>
+  <script src="{% url '/lib/adminlte/plugins/pdfmake/pdfmake.min.js' %}"></script>
+  <script src="{% url '/lib/adminlte/plugins/pdfmake/vfs_fonts.js' %}"></script>
+  <script src="{% url '/lib/adminlte/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+  <script src="{% url '/lib/adminlte/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+  <script src="{% url '/lib/adminlte/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+
+  <!-- Page specific script -->
+  <script>
+    $(function () {
+      $('#datos')
+        .DataTable({
+          responsive: true,
+          lengthChange: false,
+          autoWidth: false,
+          buttons: ['copy', 'csv', 'excel', 'pdf', 'print', 'colvis']
+        })
+        .buttons()
+        .container()
+        .appendTo('#datos_wrapper .col-md-6:eq(0)')
+      $('#example2').DataTable({
+        paging: true,
+        lengthChange: false,
+        searching: false,
+        ordering: true,
+        info: true,
+        autoWidth: false,
+        responsive: true
+      })
+    })
+  </script>
+  {% endcomment %}
 {% endblock %}

@@ -1,3 +1,5 @@
+from os import read
+import re
 from django import forms
 
 from gym.models import Membresia, Plan, Socio, Pago
@@ -28,3 +30,8 @@ class PagoForm(forms.ModelForm):
         model = Pago
         fields = ['membresia', 'monto', 'fecha_pago',
                   'fecha_vencimiento', 'estado', 'metodo_pago', 'comprobante_nro']
+
+    def __init__(self, *args, **kwargs):
+        super(PagoForm, self).__init__(*args, **kwargs)
+        if self.instance:
+            self.fields['fecha_vencimiento'].widget.attrs['readonly'] = False

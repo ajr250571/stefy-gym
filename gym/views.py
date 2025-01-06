@@ -1,19 +1,27 @@
 from ast import In
-from datetime import date
+from datetime import date, timedelta
+from django.utils import timezone
 from os import error
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from gym.models import Membresia, Plan, Socio, Pago
 from .forms import PlanForm, SocioForm, MembresiaForm, PagoForm
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.contrib import messages
+from dateutil.relativedelta import relativedelta
+import pywhatkit
+from django.db.models import Sum
+from django.db.models.functions import TruncMonth
+from django.contrib.humanize.templatetags.humanize import intcomma
 
 
 def home(request):
@@ -70,10 +78,17 @@ def signin(request):
 # Planes
 
 
-class planListView(LoginRequiredMixin, ListView):
+class planListView(PermissionRequiredMixin, ListView):
     model = Plan
     template_name = 'plan/plan_list.html'
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.view_plan'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Listado de Planes'
@@ -83,12 +98,19 @@ class planListView(LoginRequiredMixin, ListView):
         return super().get_context_data(**kwargs)
 
 
-class planCreateView(LoginRequiredMixin, CreateView):
+class planCreateView(PermissionRequiredMixin, CreateView):
     model = Plan
     form_class = PlanForm
     template_name = 'plan/plan_create.html'
     success_url = reverse_lazy('plan_list')
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.add_plan'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Crear Plan'
@@ -97,12 +119,19 @@ class planCreateView(LoginRequiredMixin, CreateView):
         return super().get_context_data(**kwargs)
 
 
-class planUpdateView(LoginRequiredMixin, UpdateView):
+class planUpdateView(PermissionRequiredMixin, UpdateView):
     model = Plan
     form_class = PlanForm
     template_name = 'plan/plan_create.html'
     success_url = reverse_lazy('plan_list')
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.change_plan'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Editar Plan'
@@ -111,19 +140,33 @@ class planUpdateView(LoginRequiredMixin, UpdateView):
         return super().get_context_data(**kwargs)
 
 
-class planDeleteView(LoginRequiredMixin, DeleteView):
+class planDeleteView(PermissionRequiredMixin, DeleteView):
     model = Plan
     template_name = 'confirm_delete.html'
     success_url = reverse_lazy('plan_list')
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.delete_plan'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
 
 # Socios
 
-class socioListView(LoginRequiredMixin, ListView):
+class socioListView(PermissionRequiredMixin, ListView):
     model = Socio
     template_name = 'socio/socio_list.html'
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.view_socio'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Listado de Socios'
@@ -133,12 +176,24 @@ class socioListView(LoginRequiredMixin, ListView):
         return super().get_context_data(**kwargs)
 
 
-class socioCreateView(LoginRequiredMixin, CreateView):
+class socioCreateView(PermissionRequiredMixin, CreateView):
     model = Socio
     form_class = SocioForm
     template_name = 'socio/socio_create.html'
-    success_url = reverse_lazy('socio_list')
+    # success_url = reverse_lazy('socio_list')
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.add_socio'
+
+    def get_success_url(self) -> str:
+        # Redirigir a crete Membresia si el socio fue creado exitosamente
+        return reverse('membresia_socio_create',
+                       kwargs={'pk': self.object.pk})  # type: ignore
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Crear Socio'
@@ -147,12 +202,19 @@ class socioCreateView(LoginRequiredMixin, CreateView):
         return super().get_context_data(**kwargs)
 
 
-class socioUpdateView(LoginRequiredMixin, UpdateView):
+class socioUpdateView(PermissionRequiredMixin, UpdateView):
     model = Socio
     form_class = SocioForm
     template_name = 'socio/socio_create.html'
     success_url = reverse_lazy('socio_list')
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.change_socio'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Editar Socio'
@@ -161,11 +223,18 @@ class socioUpdateView(LoginRequiredMixin, UpdateView):
         return super().get_context_data(**kwargs)
 
 
-class socioDeleteView(LoginRequiredMixin, DeleteView):
+class socioDeleteView(PermissionRequiredMixin, DeleteView):
     model = Socio
     template_name = 'confirm_delete.html'
     success_url = reverse_lazy('socio_list')
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.delete_socio'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['cancel_url'] = reverse_lazy('socio_list')
@@ -174,10 +243,17 @@ class socioDeleteView(LoginRequiredMixin, DeleteView):
 # Membresias
 
 
-class membresiaListView(LoginRequiredMixin, ListView):
+class membresiaListView(PermissionRequiredMixin, ListView):
     model = Membresia
     template_name = 'membresia/membresia_list.html'
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.view_membresia'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Listado de Membresias'
@@ -187,12 +263,24 @@ class membresiaListView(LoginRequiredMixin, ListView):
         return super().get_context_data(**kwargs)
 
 
-class membresiaCreateView(LoginRequiredMixin, CreateView):
+class membresiaCreateView(PermissionRequiredMixin, CreateView):
     model = Membresia
     form_class = MembresiaForm
     template_name = 'membresia/membresia_create.html'
     success_url = reverse_lazy('membresia_list')
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.add_membresia'
+
+    def get_initial(self):
+        self.initial['fecha_fin'] = timezone.now().date() + \
+            relativedelta(months=1)
+        return super().get_initial()
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Crear Membresia'
@@ -201,12 +289,53 @@ class membresiaCreateView(LoginRequiredMixin, CreateView):
         return super().get_context_data(**kwargs)
 
 
-class membresiaUpdateView(LoginRequiredMixin, UpdateView):
+class membresiaSocioCreateView(PermissionRequiredMixin, CreateView):
     model = Membresia
     form_class = MembresiaForm
     template_name = 'membresia/membresia_create.html'
     success_url = reverse_lazy('membresia_list')
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.add_membresia'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
+
+    def get_context_data(self, **kwargs):
+        kwargs['title'] = 'Crear Membresia'
+        kwargs['crumb_url'] = reverse_lazy('membresia_list')
+        kwargs['crumb_name'] = 'Membresias'
+        return super().get_context_data(**kwargs)
+
+    def get_initial(self):
+
+        initial = super().get_initial()
+
+        initial['socio'] = self.kwargs['pk']
+        initial['fecha_fin'] = timezone.now().date() + \
+            relativedelta(months=1)
+        # Asigna plan por defecto al socio
+        plan = Plan.objects.get(duracion=1)
+        initial['plan'] = plan
+
+        return initial
+
+
+class membresiaUpdateView(PermissionRequiredMixin, UpdateView):
+    model = Membresia
+    form_class = MembresiaForm
+    template_name = 'membresia/membresia_create.html'
+    success_url = reverse_lazy('membresia_list')
+    login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.change_membresia'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Editar Membresia'
@@ -215,11 +344,18 @@ class membresiaUpdateView(LoginRequiredMixin, UpdateView):
         return super().get_context_data(**kwargs)
 
 
-class membresiaDeleteView(LoginRequiredMixin, DeleteView):
+class membresiaDeleteView(PermissionRequiredMixin, DeleteView):
     model = Membresia
     template_name = 'confirm_delete.html'
     success_url = reverse_lazy('membresia_list')
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.delete_membresia'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['cancel_url'] = reverse_lazy('membresia_list')
@@ -228,10 +364,21 @@ class membresiaDeleteView(LoginRequiredMixin, DeleteView):
 
 # Pagos
 
-class pagoListView(LoginRequiredMixin, ListView):
+class pagoListView(PermissionRequiredMixin, ListView):
     model = Pago
     template_name = 'pago/pago_list.html'
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.view_pago'
+
+    def get_queryset(self):
+        fecha_desde = timezone.now() - relativedelta(months=6)
+        return Pago.objects.filter(fecha_pago__gte=fecha_desde).order_by('membresia', '-fecha_pago')
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Listado de Pagos'
@@ -241,12 +388,19 @@ class pagoListView(LoginRequiredMixin, ListView):
         return super().get_context_data(**kwargs)
 
 
-class pagoCreateView(LoginRequiredMixin, CreateView):
+class pagoCreateView(PermissionRequiredMixin, CreateView):
     model = Pago
     form_class = PagoForm
     template_name = 'pago/pago_create.html'
     success_url = reverse_lazy('pago_list')
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.add_pago'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Crear Pago'
@@ -255,12 +409,28 @@ class pagoCreateView(LoginRequiredMixin, CreateView):
         return super().get_context_data(**kwargs)
 
 
-class pagoMembresiaCreateView(LoginRequiredMixin, CreateView):
+class pagoMembresiaCreateView(PermissionRequiredMixin, CreateView):
     model = Pago
     form_class = PagoForm
     template_name = 'pago/pago_create.html'
-    success_url = reverse_lazy('pago_list')
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.add_pago'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
+
+    def get_success_url(self):
+        # Obtener parámetros de la URL
+        param = self.kwargs.get('pk')
+        if param:
+            # Si hay parámetro, redirigir a una URL específica
+            return reverse('membresia_list')
+        else:
+            # Si no hay parámetro, redirigir a la URL por defecto
+            return reverse('pago_list')
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Crear Pago'
@@ -272,19 +442,30 @@ class pagoMembresiaCreateView(LoginRequiredMixin, CreateView):
         initial = super().get_initial()
         initial['membresia'] = self.kwargs['pk']
         membresia = Membresia.objects.get(pk=self.kwargs['pk'])
-        initial['monto'] = membresia.plan.precio
-        initial['fecha_vencimiento'] = membresia.fecha_fin
+        if membresia.plan == None:
+            initial['monto'] = 0
+        else:
+            initial['monto'] = membresia.plan.precio
+            initial['fecha_vencimiento'] = membresia.fecha_fin
+
         initial['fecha_pago'] = date.today()
         initial['estado'] = 'PAGADO'
         return initial
 
 
-class pagoUpdateView(LoginRequiredMixin, UpdateView):
+class pagoUpdateView(PermissionRequiredMixin, UpdateView):
     model = Pago
     form_class = PagoForm
     template_name = 'pago/pago_create.html'
     success_url = reverse_lazy('pago_list')
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.change_pago'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Editar Pago'
@@ -293,11 +474,18 @@ class pagoUpdateView(LoginRequiredMixin, UpdateView):
         return super().get_context_data(**kwargs)
 
 
-class pagoDeleteView(LoginRequiredMixin, DeleteView):
+class pagoDeleteView(PermissionRequiredMixin, DeleteView):
     model = Pago
     template_name = 'confirm_delete.html'
     success_url = reverse_lazy('pago_list')
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.delete_pago'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['cancel_url'] = reverse_lazy('pago_list')
@@ -306,10 +494,17 @@ class pagoDeleteView(LoginRequiredMixin, DeleteView):
 # Listar membresias vencidas
 
 
-class membresiaVencidaListView(LoginRequiredMixin, ListView):
+class membresiaVencidaListView(PermissionRequiredMixin, ListView):
     model = Membresia
     template_name = 'membresia/membresia_list.html'
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.view_membresia'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Listado de Membresias Vencidas'
@@ -321,10 +516,17 @@ class membresiaVencidaListView(LoginRequiredMixin, ListView):
         return Membresia.objects.filter(estado='VENCIDA')
 
 
-class membresiaDetailView(DetailView):
+class membresiaDetailView(PermissionRequiredMixin, DetailView):
     model = Membresia
     template_name = 'membresia/membresia_detail.html'
     login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.view_membresia'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Detalle de Membresia'
@@ -337,3 +539,34 @@ class membresiaDetailView(DetailView):
         membresia = Membresia.objects.get(socio__dni=dni)
 
         return membresia
+
+
+class errorPermisosView(TemplateView):
+    template_name = 'error_permisos.html'
+
+
+def send_whatsapp_message(request):
+    if request.method == 'POST':
+        mensaje = request.POST.get('mensaje')
+        telefono = request.POST.get('telefono')
+        pywhatkit.sendwhatmsg(  # type: ignore
+            '+543814755771', 'Prueba de envio', 10, 8, 15, True, 5)  # type: ignore
+
+        return redirect('home')
+    else:
+        return render(request, 'error_permisos.html')
+
+
+class MontosMensualesView(TemplateView):
+    template_name = 'pago/montos_mensuales.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        montos_mensuales = Pago.objects.annotate(
+            mes=TruncMonth('fecha_pago')
+        ).values('mes').annotate(
+            total=Sum('monto')
+        ).order_by('-mes')
+
+        context['montos_mensuales'] = montos_mensuales
+        return context

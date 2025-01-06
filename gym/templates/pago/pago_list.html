@@ -4,6 +4,7 @@
   <tr>
     <th scope="col">Membresia</th>
     <th scope="col">F.Pago</th>
+    <th scope="col">Monto</th>
     <th scope="col">Estado</th>
     <th scope="col">Acciones</th>
   </tr>
@@ -13,6 +14,7 @@
     <tr>
       <td scope="row">{{ pago.membresia }}</td>
       <td>{{ pago.fecha_pago }}</td>
+      <td>{{ pago.monto }}</td>
       <td>
         {% if pago.estado == 'PAGADO' %}
           <span class="badge bg-success">Pagada</span>

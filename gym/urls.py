@@ -44,4 +44,12 @@ urlpatterns = [
 
     path('membresia/<str:dni>', membresiaDetailView.as_view(),
          name='membresia_detail'),
+
+    path('error_permisos/', errorPermisosView.as_view(), name='error_permisos'),
+
+    path('montos_mensuales/', MontosMensualesView.as_view(),
+         name='montos_mensuales'),
+
+    path('membresia_socio/create/<int:pk>', membresiaSocioCreateView.as_view(),
+         name='membresia_socio_create'),
 ]

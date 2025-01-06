@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container">
+    <h2>Montos Mensuales</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Mes</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for monto in montos_mensuales %}
+          <tr>
+            <td>{{ monto.mes|date:'F Y' }}</td>
+            <td>${{ monto.total|floatformat:2 }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

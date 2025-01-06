@@ -75,6 +75,15 @@
                 <p>Membresias Vencidas</p>
               </a>
             </li>
+
+            {% if user.is_superuser and user.is_authenticated %}
+              <li class="nav-item">
+                <a href="{% url 'montos_mensuales' %}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Montos Mensuales</p>
+                </a>
+              </li>
+            {% endif %}
           </ul>
         </li>
       </ul>

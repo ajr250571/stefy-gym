@@ -1,10 +1,16 @@
 from ast import arg
 from datetime import timedelta
+import datetime
 from tabnanny import verbose
+import time
 from typing import Iterable
+from venv import create
 from django.db import models
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
+import pywhatkit
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Socio(models.Model):
@@ -21,6 +27,7 @@ class Socio(models.Model):
     class Meta:
         verbose_name = 'Socio'
         verbose_name_plural = 'Socios'
+        ordering = ['apellido', 'nombre']
 
     def nombre_completo(self):
         return f"{self.apellido}, {self.nombre}"
@@ -43,6 +50,7 @@ class Plan(models.Model):
     class Meta:
         verbose_name = 'Plan'
         verbose_name_plural = 'Planes'
+        ordering = ['nombre']
 
     def __str__(self):
         return self.nombre
@@ -60,7 +68,7 @@ class Membresia(models.Model):
     )
     plan = models.ForeignKey(
         Plan, on_delete=models.PROTECT, blank=False, null=False)
-    fecha_inicio = models.DateField()
+    fecha_inicio = models.DateField(default=timezone.now)
     fecha_fin = models.DateField()
     estado = models.CharField(max_length=10, choices=ESTADOS, default='ACTIVA')
     fecha_alta = models.DateTimeField(auto_now_add=True)
@@ -73,8 +81,11 @@ class Membresia(models.Model):
 
     def vigente(self):
         """Verifica si la membresía está vigente"""
-        self.actualizar_estado()
-        self.save()
+        if self.estado == 'ACTIVA':
+            if self.fecha_fin < timezone.now().date():
+                self.estado = 'VENCIDA'
+                self.save()
+
         return self.estado == 'ACTIVA'
 
     def actualizar_estado(self):
@@ -136,12 +147,11 @@ class Pago(models.Model):
                 self.fecha_vencimiento)
             self.membresia.actualizar_fecha_fin(fecha_vencimiento)
 
-        if self.monto < self.membresia.plan.precio:
-            self.estado = 'PENDIENTE'
-        else:
+        if self.monto > 0:
             self.estado = 'PAGADO'
-        if self.fecha_pago > self.fecha_vencimiento:
-            self.estado = 'VENCIDO'
+
+        # if self.fecha_pago > self.fecha_vencimiento:
+        #     self.estado = 'VENCIDO'
 
         return super().save(*args, **kwargs)
 
@@ -151,3 +161,23 @@ class Pago(models.Model):
     class Meta:
         verbose_name = 'Pago'
         verbose_name_plural = 'Pagos'
+        ordering = ['membresia', '-fecha_pago']
+
+
+@receiver(post_save, sender=Membresia)
+def crear_pago_inicial_signal(sender, instance, created, **kwargs):
+    if created:
+        PagoService.crear_pago_inicial(instance)
+
+
+class PagoService:
+    @staticmethod
+    def crear_pago_inicial(membresia):
+
+        return Pago.objects.create(
+            membresia=membresia,
+            monto=membresia.plan.precio,
+            fecha_pago=membresia.fecha_inicio,
+            fecha_vencimiento=membresia.fecha_fin,
+            estado='PAGADO'
+        )

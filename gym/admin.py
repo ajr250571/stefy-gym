@@ -28,5 +28,5 @@ class MembresiaAdmin(admin.ModelAdmin):
 class PagoAdmin(admin.ModelAdmin):
     list_display = ('membresia', 'monto', 'fecha_pago',
                     'fecha_vencimiento', 'estado', 'metodo_pago')
-    list_filter = ('membresia',)
+
     ordering = ('membresia',)

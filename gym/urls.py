@@ -52,4 +52,7 @@ urlpatterns = [
 
     path('membresia_socio/create/<int:pk>', membresiaSocioCreateView.as_view(),
          name='membresia_socio_create'),
+
+    path('enviar_whatsapp/<int:membresia_id>',
+         enviar_whatsapp.as_view(), name='enviar_whatsapp'),
 ]

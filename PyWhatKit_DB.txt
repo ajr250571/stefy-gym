@@ -168,3 +168,13 @@ Time: 10:43
 Phone Number: +543814755771
 Message: Whatsapp Bot: Prueba de notificacion de Vencimiento.
 --------------------
+Date: 6/1/2025
+Time: 16:34
+Phone Number: +543814755771
+Message: Whatsapp Bot: Prueba de notificacion de Vencimiento.
+--------------------
+Date: 6/1/2025
+Time: 16:36
+Phone Number: +543814755771
+Message: Hola Armando!Te informamos que tu membresía del plan Mensual se encuentra vencida desde el 05/01/2025.Por favor, contacta con nosotros para renovarla.
+--------------------

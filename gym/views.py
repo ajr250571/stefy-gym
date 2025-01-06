@@ -12,7 +12,7 @@ from django.db import IntegrityError
 from django.urls import reverse, reverse_lazy
 from gym.models import Membresia, Plan, Socio, Pago
 from .forms import PlanForm, SocioForm, MembresiaForm, PagoForm
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, TemplateView
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -22,6 +22,8 @@ import pywhatkit
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth
 from django.contrib.humanize.templatetags.humanize import intcomma
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 
 
 def home(request):
@@ -570,3 +572,33 @@ class MontosMensualesView(TemplateView):
 
         context['montos_mensuales'] = montos_mensuales
         return context
+
+
+class enviar_whatsapp(View):
+    def get(self, request, membresia_id):
+        Membresia.enviar_whatsapp(membresia_id)
+        return redirect('membresia_list')
+
+
+@require_http_methods(["POST"])
+def enviar_whatsapp_nop(request, membresia_id):
+    """
+    Vista para manejar el envío de notificaciones WhatsApp
+    """
+    try:
+        resultado = Membresia.enviar_whatsapp(membresia_id)
+        if resultado:
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Notificación WhatsApp enviada correctamente'
+            })
+        else:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'No se pudo enviar la notificación'
+            }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)

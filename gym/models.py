@@ -73,6 +73,55 @@ class Membresia(models.Model):
     estado = models.CharField(max_length=10, choices=ESTADOS, default='ACTIVA')
     fecha_alta = models.DateTimeField(auto_now_add=True)
 
+    @classmethod
+    def enviar_whatsapp(cls, membresia_id):
+        print("Enviando WhatsApp...")
+        """
+        Envía una notificación por WhatsApp al socio de una membresía específica
+
+        Args:
+            membresia_id: ID de la membresía a notificar
+
+        Returns:
+            bool: True si el mensaje se envió correctamente, False en caso contrario
+        """
+        try:
+            membresia = cls.objects.select_related(
+                'socio', 'plan').get(id=membresia_id)
+
+            if membresia.estado == 'VENCIDA' and membresia.socio.telefono:
+                # Limpiamos el número de teléfono (asumiendo formato +549xxxxxxxxxx)
+                telefono = membresia.socio.telefono
+                mensaje = (
+                    f"Hola {membresia.socio.nombre}!\n"
+                    f"Te informamos que tu membresía del plan {
+                        membresia.plan.nombre} "
+                    f"se encuentra vencida desde el {
+                        membresia.fecha_fin.strftime('%d/%m/%Y')}.\n"
+                    "Por favor, contacta con nosotros para renovarla."
+                )
+
+                try:
+                    # pywhatkit.sendwhatmsg_instantly envía el mensaje inmediatamente
+                    pywhatkit.sendwhatmsg_instantly(  # type: ignore
+                        phone_no=telefono,
+                        message=mensaje,
+                        wait_time=10,  # Segundos de espera para enviar el mensaje
+                        tab_close=True,  # Cierra la pestaña después de enviar
+                        close_time=5,  # Segundos de espera para cerrar la pestaña
+                    )
+                    return True
+                except Exception as e:
+                    print(f"Error al enviar WhatsApp: {str(e)}")
+                    return False
+            return False
+        except cls.DoesNotExist:
+            print(f"No se encontró la membresía con ID: {membresia_id}")
+            return False
+        except Exception as e:
+            print(f"Error al procesar la membresía: {str(e)}")
+            return False
+
     def dias_restantes(self):
         """Retorna los días restantes de la membresía"""
         if self.estado != 'ACTIVA':
@@ -95,7 +144,8 @@ class Membresia(models.Model):
 
     def inicializar_fecha_fin(self):
         """Actualiza la fecha de finalización de la membresía"""
-        self.fecha_fin = self.plan.calcular_fecha_fin(self.fecha_inicio)
+        # self.fecha_fin = self.plan.calcular_fecha_fin(self.fecha_inicio)
+        self.fecha_fin = self.fecha_inicio  # el pago es el inicio de la membresia
 
     def actualizar_fecha_fin(self, nueva_fecha_fin):
         """Actualiza la fecha de finalización de la membresía"""

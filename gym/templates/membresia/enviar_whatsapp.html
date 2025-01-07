@@ -1,8 +1,0 @@
-{% extends 'base.html' %}
-
-{% block content %}
-  <form action="{% url 'enviar_whatsapp' object.id %}" method="post">
-    {% csrf_token %}
-    <button type="submit">Enviar WhatsApp</button>
-  </form>
-{% endblock %}

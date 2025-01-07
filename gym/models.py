@@ -11,6 +11,8 @@ from dateutil.relativedelta import relativedelta
 import pywhatkit
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.mail import EmailMessage
+from django.conf import settings
 
 
 class Socio(models.Model):
@@ -74,14 +76,48 @@ class Membresia(models.Model):
     fecha_alta = models.DateTimeField(auto_now_add=True)
 
     @classmethod
+    def enviar_email(cls, membresia_id):
+        membresia = cls.objects.select_related(
+            'socio', 'plan').get(id=membresia_id)
+        if membresia.socio.email:
+            # Limpiamos el correo electrónico (asumiendo formato email)
+            correo = membresia.socio.email
+            if membresia.fecha_fin < timezone.now().date():
+                mensaje = (
+                    f"Hola {membresia.socio.nombre}!\n"
+                    f"Te informamos que tu membresía del plan "
+                    f"{membresia.plan.nombre} se encuentra vencida desde el "
+                    f"{membresia.fecha_fin.strftime('%d/%m/%Y')}.\n"
+                    "Por favor, contacta con nosotros para renovarla."
+                )
+            else:
+                mensaje = (
+                    f"Hola {membresia.socio.nombre}!\n"
+                    f"Te informamos que tu membresía del plan "
+                    f"{membresia.plan.nombre} vencerá en el dia "
+                    f"{membresia.fecha_fin.strftime('%d/%m/%Y')}.\n"
+                    "Por favor, contacta con nosotros para renovarla."
+                )
+
+            try:
+                email = EmailMessage(
+                    subject='Membresía vencida',
+                    body=mensaje,
+                    to=[correo],
+                    from_email=settings.EMAIL_HOST_USER
+                )
+                email.send()
+                return True
+            except Exception as e:
+                print(f"Error al enviar correo electrónico: {str(e)}")
+                return False
+
+    @classmethod
     def enviar_whatsapp(cls, membresia_id):
-        print("Enviando WhatsApp...")
         """
         Envía una notificación por WhatsApp al socio de una membresía específica
-
         Args:
             membresia_id: ID de la membresía a notificar
-
         Returns:
             bool: True si el mensaje se envió correctamente, False en caso contrario
         """
@@ -103,13 +139,19 @@ class Membresia(models.Model):
 
                 try:
                     # pywhatkit.sendwhatmsg_instantly envía el mensaje inmediatamente
-                    pywhatkit.sendwhatmsg_instantly(  # type: ignore
-                        phone_no=telefono,
-                        message=mensaje,
-                        wait_time=10,  # Segundos de espera para enviar el mensaje
-                        tab_close=True,  # Cierra la pestaña después de enviar
-                        close_time=5,  # Segundos de espera para cerrar la pestaña
-                    )
+                    # pywhatkit.sendwhatmsg_instantly(  # type: ignore
+                    #     phone_no=telefono,
+                    #     message=mensaje,
+                    #     wait_time=10,  # Segundos de espera para enviar el mensaje
+                    #     tab_close=True,  # Cierra la pestaña después de enviar
+                    #     close_time=5  # Segundos de espera para cerrar la pestaña
+                    # )
+                    hora = datetime.datetime.now()
+                    hora_send = hora.hour
+                    minutos_send = hora.minute + 1
+                    pywhatkit.sendwhatmsg(
+                        telefono, mensaje, hora_send, minutos_send, 10, True, 2)
+
                     return True
                 except Exception as e:
                     print(f"Error al enviar WhatsApp: {str(e)}")
@@ -124,7 +166,7 @@ class Membresia(models.Model):
 
     def dias_restantes(self):
         """Retorna los días restantes de la membresía"""
-        if self.estado != 'ACTIVA':
+        if self.estado == 'CANCELADA':
             return 0
         return (self.fecha_fin - timezone.now().date()).days
 

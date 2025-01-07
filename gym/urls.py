@@ -1,5 +1,4 @@
 from os import name
-from tkinter.font import names
 from django.urls import path
 from .views import *
 
@@ -55,4 +54,17 @@ urlpatterns = [
 
     path('enviar_whatsapp/<int:membresia_id>',
          enviar_whatsapp.as_view(), name='enviar_whatsapp'),
+
+    path('whatsapp_vencidas/', whatsapp_vencidas.as_view(),
+         name='whatsapp_vencidas'),
+    path('whatsapp_por_vencer/', whatsapp_por_vencer.as_view(),
+         name='whatsapp_por_vencer'),
+
+    path('enviar_email/<int:membresia_id>',
+         enviar_email.as_view(), name='enviar_email'),
+
+    path('email_vencidas/', email_vencidas.as_view(),
+         name='email_vencidas'),
+    path('email_por_vencer/', email_por_vencer.as_view(),
+         name='email_por_vencer'),
 ]

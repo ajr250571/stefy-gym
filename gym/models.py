@@ -77,12 +77,14 @@ class Membresia(models.Model):
 
     @classmethod
     def enviar_email(cls, membresia_id):
+        print(settings.EMAIL_HOST_USER)
         membresia = cls.objects.select_related(
             'socio', 'plan').get(id=membresia_id)
         if membresia.socio.email:
             # Limpiamos el correo electrónico (asumiendo formato email)
             correo = membresia.socio.email
             if membresia.fecha_fin < timezone.now().date():
+                titulo = 'Membresía vencida'
                 mensaje = (
                     f"Hola {membresia.socio.nombre}!\n"
                     f"Te informamos que tu membresía del plan "
@@ -91,6 +93,7 @@ class Membresia(models.Model):
                     "Por favor, contacta con nosotros para renovarla."
                 )
             else:
+                titulo = 'Membresía a vencer'
                 mensaje = (
                     f"Hola {membresia.socio.nombre}!\n"
                     f"Te informamos que tu membresía del plan "
@@ -101,7 +104,7 @@ class Membresia(models.Model):
 
             try:
                 email = EmailMessage(
-                    subject='Membresía vencida',
+                    subject=titulo,
                     body=mensaje,
                     to=[correo],
                     from_email=settings.EMAIL_HOST_USER

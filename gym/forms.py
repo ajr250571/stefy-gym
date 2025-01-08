@@ -24,6 +24,13 @@ class MembresiaForm(forms.ModelForm):
         model = Membresia
         fields = ['socio', 'plan', 'fecha_inicio', 'fecha_fin', 'estado']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['socio'].queryset = Socio.objects.filter(  # type: ignore
+            activo=True)
+        self.fields['plan'].queryset = Plan.objects.filter(  # type: ignore
+            activo=True)  # type: ignore
+
 
 class PagoForm(forms.ModelForm):
     class Meta:

@@ -23,6 +23,13 @@ urlpatterns = [
     path('socio/delete/<int:pk>', socioDeleteView.as_view(), name='socio_delete'),
 
     path('membresia/list/', membresiaListView.as_view(), name='membresia_list'),
+    path('membresia_activa/list/', membresiaActivaListView.as_view(),
+         name='membresia_activa_list'),
+    path('membresia_vencida/list/', membresiaVencidaListView.as_view(),
+         name='membresia_vencida_list'),
+    path('membresia_cancelada/list/', membresiaCanceladaListView.as_view(),
+         name='membresia_cancelada_list'),
+
     path('membresia/create/', membresiaCreateView.as_view(),
          name='membresia_create'),
     path('membresia/update/<int:pk>',

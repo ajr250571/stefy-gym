@@ -158,6 +158,10 @@ class planDeleteView(PermissionRequiredMixin, DeleteView):
             self.request, 'No tienes permisos para realizar esta acción.')
         return redirect(self.permisos_url)
 
+    def get_context_data(self, **kwargs):
+        kwargs['cancel_url'] = reverse_lazy('plan_list')
+        return super().get_context_data(**kwargs)
+
 
 # Socios
 
@@ -266,6 +270,102 @@ class membresiaListView(PermissionRequiredMixin, ListView):
         kwargs['crumb_url'] = reverse_lazy('membresia_list')
         kwargs['crumb_name'] = 'Membresias'
         return super().get_context_data(**kwargs)
+
+    def get_queryset(self):
+        # 'ACTIVA'
+        return Membresia.objects.filter(estado__in=['ACTIVA', 'VENCIDA'])
+
+# Listar membresias vencidas
+
+
+class membresiaActivaListView(PermissionRequiredMixin, ListView):
+    model = Membresia
+    template_name = 'membresia/membresia_list.html'
+    login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.view_membresia'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
+
+    def get_context_data(self, **kwargs):
+        kwargs['title'] = 'Listado de Membresias Activas'
+        kwargs['create_url'] = reverse_lazy('membresia_create')
+        kwargs['crumb_url'] = reverse_lazy('membresia_activa_list')
+        kwargs['crumb_name'] = 'Membresias'
+        return super().get_context_data(**kwargs)
+
+    def get_queryset(self):
+        # 'ACTIVA'
+        return Membresia.objects.filter(estado='ACTIVA')
+
+
+class membresiaVencidaListView(PermissionRequiredMixin, ListView):
+    model = Membresia
+    template_name = 'membresia/membresia_list.html'
+    login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.view_membresia'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
+
+    def get_context_data(self, **kwargs):
+        kwargs['title'] = 'Listado de Membresias Vencidas'
+        kwargs['create_url'] = reverse_lazy('membresia_create')
+        kwargs['crumb_url'] = reverse_lazy('membresia_vencida_list')
+        kwargs['crumb_name'] = 'Membresias'
+        return super().get_context_data(**kwargs)
+
+    def get_queryset(self):
+        # 'VENCIDA'
+        return Membresia.objects.filter(estado='VENCIDA')
+
+
+class membresiaCanceladaListView(PermissionRequiredMixin, ListView):
+    model = Membresia
+    template_name = 'membresia/membresia_list.html'
+    login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.view_membresia'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
+
+    def get_context_data(self, **kwargs):
+        kwargs['title'] = 'Listado de Membresias Canceladas'
+        kwargs['create_url'] = reverse_lazy('membresia_create')
+        kwargs['crumb_url'] = reverse_lazy('membresia_cancelada_list')
+        kwargs['crumb_name'] = 'Membresias'
+        return super().get_context_data(**kwargs)
+
+    def get_queryset(self):
+        # 'CANCELADA'
+        return Membresia.objects.filter(estado='CANCELADA')
+
+
+class membresiaDetailView(DetailView):
+    model = Membresia
+    template_name = 'membresia/membresia_detail.html'
+    login_url = '/login/'
+
+    def get_context_data(self, **kwargs):
+        kwargs['title'] = 'Detalle de Membresia'
+        kwargs['crumb_url'] = reverse_lazy('home')
+        kwargs['crumb_name'] = ''
+        return super().get_context_data(**kwargs)
+
+    def get_object(self, queryset=None):
+        dni = self.kwargs['dni']
+        membresia = Membresia.objects.get(socio__dni=dni)
+
+        return membresia
 
 
 class membresiaCreateView(PermissionRequiredMixin, CreateView):
@@ -495,48 +595,6 @@ class pagoDeleteView(PermissionRequiredMixin, DeleteView):
     def get_context_data(self, **kwargs):
         kwargs['cancel_url'] = reverse_lazy('pago_list')
         return super().get_context_data(**kwargs)
-
-# Listar membresias vencidas
-
-
-class membresiaVencidaListView(PermissionRequiredMixin, ListView):
-    model = Membresia
-    template_name = 'membresia/membresia_list.html'
-    login_url = '/login/'
-    permisos_url = '/error_permisos/'
-    permission_required = 'gym.view_membresia'
-
-    def handle_no_permission(self):
-        messages.error(
-            self.request, 'No tienes permisos para realizar esta acción.')
-        return redirect(self.permisos_url)
-
-    def get_context_data(self, **kwargs):
-        kwargs['title'] = 'Listado de Membresias Vencidas'
-        kwargs['crumb_url'] = reverse_lazy('membresia_list')
-        kwargs['crumb_name'] = 'Membresias'
-        return super().get_context_data(**kwargs)
-
-    def get_queryset(self):
-        return Membresia.objects.filter(estado='VENCIDA')
-
-
-class membresiaDetailView(DetailView):
-    model = Membresia
-    template_name = 'membresia/membresia_detail.html'
-    login_url = '/login/'
-
-    def get_context_data(self, **kwargs):
-        kwargs['title'] = 'Detalle de Membresia'
-        kwargs['crumb_url'] = reverse_lazy('home')
-        kwargs['crumb_name'] = ''
-        return super().get_context_data(**kwargs)
-
-    def get_object(self, queryset=None):
-        dni = self.kwargs['dni']
-        membresia = Membresia.objects.get(socio__dni=dni)
-
-        return membresia
 
 
 class errorPermisosView(TemplateView):

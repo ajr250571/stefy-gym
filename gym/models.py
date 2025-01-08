@@ -16,14 +16,17 @@ from django.conf import settings
 
 
 class Socio(models.Model):
-    nombre = models.CharField(max_length=100)
-    apellido = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    telefono = models.CharField(max_length=20, blank=True, null=True)
-    fecha_nacimiento = models.DateField(blank=True, null=True)
-    dni = models.CharField(max_length=20, unique=True)
-    direccion = models.CharField(max_length=100, blank=True, null=True)
-    activo = models.BooleanField(default=True)
+    nombre = models.CharField(max_length=100, verbose_name='Nombre')
+    apellido = models.CharField(max_length=100, verbose_name='Apellido')
+    email = models.EmailField(unique=True, verbose_name='Email')
+    telefono = models.CharField(
+        max_length=20, blank=True, null=True, verbose_name='Teléfono')
+    fecha_nacimiento = models.DateField(
+        blank=True, null=True, verbose_name='Fecha de Nacimiento')
+    dni = models.CharField(max_length=20, unique=True, verbose_name='DNI')
+    direccion = models.CharField(
+        max_length=100, blank=True, null=True, verbose_name='Direccion')
+    activo = models.BooleanField(default=True, verbose_name='Activo')
     fecha_alta = models.DateField(default=timezone.now)
 
     class Meta:
@@ -39,11 +42,14 @@ class Socio(models.Model):
 
 
 class Plan(models.Model):
-    nombre = models.CharField(max_length=100, unique=True)
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    nombre = models.CharField(
+        max_length=100, unique=True, verbose_name='Nombre')
+    precio = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name='Precio')
     duracion = models.IntegerField(verbose_name='Duración (meses)')
-    descripcion = models.TextField(blank=True, null=True)
-    activo = models.BooleanField(default=True)
+    descripcion = models.TextField(
+        blank=True, null=True, verbose_name='Descripción')
+    activo = models.BooleanField(default=True, verbose_name='Activo')
 
     def calcular_fecha_fin(self, fecha_inicio):
         """Calcula la fecha de finalización basada en la duración del plan"""
@@ -66,14 +72,17 @@ class Membresia(models.Model):
     ]
 
     socio = models.OneToOneField(
-        Socio, on_delete=models.PROTECT, blank=False, null=False
+        Socio, on_delete=models.PROTECT, blank=False, null=False, verbose_name='Socio'
     )
     plan = models.ForeignKey(
-        Plan, on_delete=models.PROTECT, blank=False, null=False)
-    fecha_inicio = models.DateField(default=timezone.now)
-    fecha_fin = models.DateField()
-    estado = models.CharField(max_length=10, choices=ESTADOS, default='ACTIVA')
-    fecha_alta = models.DateTimeField(auto_now_add=True)
+        Plan, on_delete=models.PROTECT, blank=False, null=False, verbose_name='Plan')
+    fecha_inicio = models.DateField(
+        default=timezone.now, verbose_name='Fecha de Inicio')
+    fecha_fin = models.DateField(verbose_name='Fecha de Finalización')
+    estado = models.CharField(
+        max_length=10, choices=ESTADOS, default='ACTIVA', verbose_name='Estado')
+    fecha_alta = models.DateTimeField(
+        auto_now_add=True, verbose_name='Fecha de Alta')
 
     @classmethod
     def enviar_email(cls, membresia_id):
@@ -152,7 +161,7 @@ class Membresia(models.Model):
                     hora = datetime.datetime.now()
                     hora_send = hora.hour
                     minutos_send = hora.minute + 1
-                    pywhatkit.sendwhatmsg(
+                    pywhatkit.sendwhatmsg(  # type: ignore
                         telefono, mensaje, hora_send, minutos_send, 10, True, 2)
 
                     return True
@@ -225,15 +234,19 @@ class Pago(models.Model):
         ('CREDITO', 'Crédito'),
         ('TRANSFERENCIA', 'Transferencia'),
     ]
-    membresia = models.ForeignKey(Membresia, on_delete=models.CASCADE)
-    monto = models.DecimalField(max_digits=10, decimal_places=2)
-    fecha_pago = models.DateField(default=timezone.now)
-    fecha_vencimiento = models.DateField()
+    membresia = models.ForeignKey(
+        Membresia, on_delete=models.CASCADE, verbose_name='Membresia')
+    monto = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name='Monto')
+    fecha_pago = models.DateField(
+        default=timezone.now, verbose_name='Fecha de Pago')
+    fecha_vencimiento = models.DateField(verbose_name='Fecha de Vencimiento')
     estado = models.CharField(
-        max_length=10, choices=ESTADOS, default='PENDIENTE')
+        max_length=10, choices=ESTADOS, default='PENDIENTE', verbose_name='Estado')
     metodo_pago = models.CharField(
-        max_length=50, blank=True, null=True, choices=METODO_PAGO, default='EFECTIVO')
-    comprobante_nro = models.CharField(max_length=50, blank=True, null=True)
+        max_length=50, blank=True, null=True, choices=METODO_PAGO, default='EFECTIVO', verbose_name='Metodo de Pago')
+    comprobante_nro = models.CharField(
+        max_length=50, blank=True, null=True, verbose_name='Nro. de Comprobante')
 
     def save(self, *args, **kwargs):
         if not self.pk:  # si en un nuevo pago
@@ -276,3 +289,24 @@ class PagoService:
             fecha_vencimiento=membresia.fecha_fin,
             estado='PAGADO'
         )
+
+
+class Asistencia(models.Model):
+    socio = models.ForeignKey(
+        Socio, on_delete=models.CASCADE, verbose_name='Socio')
+    fecha = models.DateField(default=timezone.now, verbose_name='Fecha')
+
+    class Meta:
+        verbose_name = 'Asistencia'
+        verbose_name_plural = 'Asistencias'
+        ordering = ['socio', '-fecha']
+
+    def __str__(self):
+        return f"{self.socio} - {self.fecha}"
+
+    @classmethod
+    def registrar_asistencia(cls, socio_dni):
+        socio = Socio.objects.get(dni=socio_dni)
+        # Si no existe asistencia para el socio y fecha, crear una nueva
+        if not cls.objects.filter(socio=socio, fecha=timezone.now().date()).exists():
+            return cls.objects.create(socio=socio, fecha=timezone.now().date())

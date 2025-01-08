@@ -11,7 +11,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.urls import reverse, reverse_lazy
-from gym.models import Membresia, Plan, Socio, Pago
+from gym.models import Asistencia, Membresia, Plan, Socio, Pago
 from .forms import PlanForm, SocioForm, MembresiaForm, PagoForm
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
@@ -363,9 +363,13 @@ class membresiaDetailView(DetailView):
 
     def get_object(self, queryset=None):
         dni = self.kwargs['dni']
-        membresia = Membresia.objects.get(socio__dni=dni)
-
-        return membresia
+        try:
+            membresia = Membresia.objects.get(socio__dni=dni)
+            Asistencia.registrar_asistencia(membresia.socio.dni)
+            return membresia
+        except Exception as e:
+            print(f"Error al obtener membresía: {str(e)}")
+            return redirect('home')
 
 
 class membresiaCreateView(PermissionRequiredMixin, CreateView):
@@ -693,9 +697,11 @@ def enviar_whatsapp_membresias_por_vencer(dias_anticipacion=7):
                     dias_restantes} días ({membresia.fecha_fin.strftime('%d/%m/%Y')}).\n"
                 "Contacta con nosotros para renovarla."
             )
+            if telefono is None:
+                continue
 
             hora = timezone.now()
-            pywhatkit.sendwhatmsg(
+            pywhatkit.sendwhatmsg(  # type: ignore
                 telefono,
                 mensaje,
                 hora.hour,

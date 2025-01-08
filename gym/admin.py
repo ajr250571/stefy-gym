@@ -30,3 +30,11 @@ class PagoAdmin(admin.ModelAdmin):
                     'fecha_vencimiento', 'estado', 'metodo_pago')
 
     ordering = ('membresia',)
+
+
+@admin.register(Asistencia)
+class AsistenciaAdmin(admin.ModelAdmin):
+    list_display = ('socio', 'fecha')
+    list_filter = ('socio', 'fecha',)
+
+    ordering = ('socio', '-fecha')

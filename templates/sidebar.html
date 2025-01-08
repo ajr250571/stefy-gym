@@ -128,5 +128,10 @@
       const valor = input.value
       enlace.href = `/membresia/${valor}` // Ajusta la URL según tu configuración de Django
     })
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        enlace.click()
+      }
+    })
   </script>
 {% endblock %}

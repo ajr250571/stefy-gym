@@ -5,4 +5,5 @@ crispy-bootstrap4==2024.10
 pillow==11.1.0
 pywhatkit==5.4
 django-cors-headers==4.6.0
+django-environ==0.11.2
 

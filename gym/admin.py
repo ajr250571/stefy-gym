@@ -1,31 +1,32 @@
 from django.contrib import admin
+from simple_history.admin import SimpleHistoryAdmin
 
 from .models import *
 
 
 @admin.register(Socio)
-class SocioAdmin(admin.ModelAdmin):
+class SocioAdmin(SimpleHistoryAdmin):
     list_display = ('nombre_completo', 'email', 'telefono',
                     'fecha_nacimiento', 'dni', 'direccion', 'activo', 'fecha_alta')
     ordering = ('apellido', 'nombre')
 
 
 @admin.register(Plan)
-class PlanAdmin(admin.ModelAdmin):
+class PlanAdmin(SimpleHistoryAdmin):
     list_display = ('nombre', 'descripcion', 'precio',
                     'duracion', 'activo')
     ordering = ('duracion',)
 
 
 @admin.register(Membresia)
-class MembresiaAdmin(admin.ModelAdmin):
+class MembresiaAdmin(SimpleHistoryAdmin):
     list_display = ('socio', 'plan', 'fecha_inicio',
                     'fecha_fin', 'estado', 'vigente')
     ordering = ('socio',)
 
 
 @admin.register(Pago)
-class PagoAdmin(admin.ModelAdmin):
+class PagoAdmin(SimpleHistoryAdmin):
     list_display = ('membresia', 'monto', 'fecha_pago',
                     'fecha_vencimiento', 'estado', 'metodo_pago')
 

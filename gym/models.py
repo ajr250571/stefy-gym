@@ -3,6 +3,7 @@ from datetime import timedelta
 import datetime
 from tabnanny import verbose
 import time
+from tkinter import N
 from typing import Iterable
 from venv import create
 from django.db import models
@@ -13,6 +14,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.mail import EmailMessage
 from django.conf import settings
+from simple_history.models import HistoricalRecords
 
 
 class Socio(models.Model):
@@ -28,6 +30,7 @@ class Socio(models.Model):
         max_length=100, blank=True, null=True, verbose_name='Direccion')
     activo = models.BooleanField(default=True, verbose_name='Activo')
     fecha_alta = models.DateField(default=timezone.now)
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Socio'
@@ -50,6 +53,7 @@ class Plan(models.Model):
     descripcion = models.TextField(
         blank=True, null=True, verbose_name='Descripción')
     activo = models.BooleanField(default=True, verbose_name='Activo')
+    history = HistoricalRecords()
 
     def calcular_fecha_fin(self, fecha_inicio):
         """Calcula la fecha de finalización basada en la duración del plan"""
@@ -83,6 +87,7 @@ class Membresia(models.Model):
         max_length=10, choices=ESTADOS, default='ACTIVA', verbose_name='Estado')
     fecha_alta = models.DateTimeField(
         auto_now_add=True, verbose_name='Fecha de Alta')
+    history = HistoricalRecords()
 
     @classmethod
     def enviar_email(cls, membresia_id):
@@ -247,6 +252,7 @@ class Pago(models.Model):
         max_length=50, blank=True, null=True, choices=METODO_PAGO, default='EFECTIVO', verbose_name='Metodo de Pago')
     comprobante_nro = models.CharField(
         max_length=50, blank=True, null=True, verbose_name='Nro. de Comprobante')
+    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
         if not self.pk:  # si en un nuevo pago

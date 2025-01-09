@@ -34,15 +34,15 @@ INSTALLED_APPS = [
     'corsheaders',
     'crispy_forms',
     'crispy_bootstrap4',
+    'simple_history',
 ]
+
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '192.168.1.0/24',  # Esto permite todas las IPs en tu red local 192.168.1.x
-    '192.168.0.7'  # Por ejemplo: '192.168.1.100'
 ]
 
 # O si prefieres permitir todos los orígenes en tu red local (menos seguro):
@@ -50,9 +50,9 @@ ALLOWED_HOSTS = [
 
 # Configuración CORS para máquina local
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3014",
-    "http://127.0.0.1:3014",
-    "http://192.168.0.7:3014",  # Tu IP específica
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://192.168.0.7:8000",  # Tu IP específica
 ]
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -76,6 +76,15 @@ CORS_ALLOW_HEADERS = [
 # Si usas autenticación o cookies
 CORS_ALLOW_CREDENTIALS = True
 
+# Tiempo en segundos antes de cerrar la sesión por inactividad
+SESSION_COOKIE_AGE = env('SESSION_COOKIE_AGE',
+                         default=10 * 60, cast=int)  # type: ignore
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Configuración de simple_history para deshabilitar revertir cambios
+SIMPLE_HISTORY_REVERT_DISABLED = True
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -85,6 +94,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middleware.AutoLogoutMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -169,3 +180,23 @@ EMAIL_PORT = 587  # 587 o 465
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
+
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    # configura base de dato mysql
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': env('DB_NAME'),
+            'USER': env('DB_USER'),
+            'PASSWORD': env('DB_PASSWORD'),
+            'HOST': env('DB_HOST'),
+            'PORT': env('DB_PORT'),
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+                'charset': 'utf8mb4',
+            }
+        }
+    }

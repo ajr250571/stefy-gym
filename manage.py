@@ -3,6 +3,8 @@
 import os
 import sys
 
+# sys.path.insert(0, 'f:/stefy-gym')
+
 
 def main():
     """Run administrative tasks."""

@@ -12,7 +12,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.urls import reverse, reverse_lazy
 from gym.models import Asistencia, Membresia, Plan, Socio, Pago
-from .forms import PlanForm, SocioForm, MembresiaForm, PagoForm
+from .forms import PlanForm, SocioForm, MembresiaForm, PagoForm, PagoFilterForm
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -481,8 +481,30 @@ class pagoListView(PermissionRequiredMixin, ListView):
     permission_required = 'gym.view_pago'
 
     def get_queryset(self):
-        fecha_desde = timezone.now() - relativedelta(months=6)
-        return Pago.objects.filter(fecha_pago__gte=fecha_desde).order_by('membresia', '-fecha_pago')
+        # eryset = super().get_queryset()
+        form = PagoFilterForm(self.request.GET)
+        if form.is_valid():
+            fecha_pago_desde = form.cleaned_data['fecha_pago_desde']
+            fecha_pago_hasta = form.cleaned_data['fecha_pago_hasta']
+
+            # Aplicar los filtros a la queryset
+            if fecha_pago_desde and fecha_pago_hasta:
+                # ueryset = queryset.filter(fecha_pago__range=[
+                #   fecha_pago_desde, fecha_pago_hasta
+                # )
+                return Pago.objects.filter(fecha_pago__range=[
+                    fecha_pago_desde, fecha_pago_hasta
+                ]).order_by('-fecha_pago')
+            else:
+                fecha_desde = timezone.now() - relativedelta(months=3)
+                return Pago.objects.filter(fecha_pago__gte=fecha_desde).order_by('-fecha_pago')
+
+        else:
+            fecha_desde = timezone.now() - relativedelta(months=3)
+            return Pago.objects.filter(fecha_pago__gte=fecha_desde).order_by('-fecha_pago')
+
+    # fecha_desde = timezone.now() - relativedelta(months=6)
+    # return Pago.objects.filter(fecha_pago__gte=fecha_desde).order_by('membresia', '-fecha_pago')
 
     def handle_no_permission(self):
         messages.error(
@@ -494,6 +516,7 @@ class pagoListView(PermissionRequiredMixin, ListView):
         kwargs['create_url'] = reverse_lazy('pago_create')
         kwargs['crumb_url'] = reverse_lazy('pago_list')
         kwargs['crumb_name'] = 'Pagos'
+        kwargs['filter_form'] = PagoFilterForm()
         return super().get_context_data(**kwargs)
 
 

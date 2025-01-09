@@ -1,4 +1,14 @@
 {% extends 'list.html' %}
+{% load crispy_forms_tags %}
+
+{% block filtro %}
+  <form class="form-inline" method="get">
+    {% csrf_token %}
+    {{ filter_form|crispy }}
+    <button class="btn btn-info" type="submit"><i class="fas fa-filter"></i> Filtrar</button>
+  </form>
+  <hr />
+{% endblock %}
 
 {% block thead %}
   <tr>

@@ -636,7 +636,7 @@ class MontosMensualesView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Listado Montos Mensuales de Pagos'
+        context['title'] = 'Listado Montos Mensuales'
         montos_mensuales = Pago.objects.annotate(
             mes=TruncMonth('fecha_pago')
         ).values('mes').annotate(
@@ -680,10 +680,10 @@ def enviar_whatsapp_membresias_vencidas():
             else:
                 fallidos += 1
             # Esperar 20 segundos entre mensajes para evitar bloqueos
-            time.sleep(20)
+            # time.sleep(20)
         except Exception as e:
             print(f"Error al procesar membresía {
-                  membresia.id}: {str(e)}")  # type: ignore
+                membresia.id}: {str(e)}")  # type: ignore
             fallidos += 1
 
     return exitosos, fallidos, total
@@ -728,18 +728,9 @@ def enviar_whatsapp_membresias_por_vencer(dias_anticipacion=7):
             if telefono is None:
                 continue
 
-            hora = timezone.now()
-            pywhatkit.sendwhatmsg(  # type: ignore
-                telefono,
-                mensaje,
-                hora.hour,
-                hora.minute + 1,
-                10,
-                True,
-                2
-            )
+            Membresia.enviar_whatsapp(membresia.id)    # type: ignore
             exitosos += 1
-            time.sleep(20)
+            # time.sleep(20)
         except Exception as e:
             print(f"Error al procesar membresía {
                   membresia.id}: {str(e)}")  # type: ignore
@@ -872,7 +863,5 @@ class AsistenciaListView(PermissionRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Listado de Asistencias'
-        kwargs['crumb_url'] = reverse_lazy('asistencia_list')
-        kwargs['crumb_name'] = 'Asistencias'
         kwargs['filter_form'] = FechaFilterForm()
         return super().get_context_data(**kwargs)

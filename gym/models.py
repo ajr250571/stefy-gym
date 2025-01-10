@@ -10,11 +10,18 @@ from django.db import models
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 import pywhatkit
+import pyautogui
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.mail import EmailMessage
 from django.conf import settings
 from simple_history.models import HistoricalRecords
+import time
+import environ
+
+
+env = environ.Env()
+environ.Env.read_env()
 
 
 class Socio(models.Model):
@@ -91,7 +98,6 @@ class Membresia(models.Model):
 
     @classmethod
     def enviar_email(cls, membresia_id):
-        print(settings.EMAIL_HOST_USER)
         membresia = cls.objects.select_related(
             'socio', 'plan').get(id=membresia_id)
         if membresia.socio.email:
@@ -142,32 +148,59 @@ class Membresia(models.Model):
             membresia = cls.objects.select_related(
                 'socio', 'plan').get(id=membresia_id)
 
-            if membresia.estado == 'VENCIDA' and membresia.socio.telefono:
-                # Limpiamos el número de teléfono (asumiendo formato +549xxxxxxxxxx)
+            if membresia.socio.telefono:
                 telefono = membresia.socio.telefono
-                mensaje = (
-                    f"Hola {membresia.socio.nombre}!\n"
-                    f"Te informamos que tu membresía del plan {
-                        membresia.plan.nombre} "
-                    f"se encuentra vencida desde el {
-                        membresia.fecha_fin.strftime('%d/%m/%Y')}.\n"
-                    "Por favor, contacta con nosotros para renovarla."
-                )
+                if membresia.fecha_fin < timezone.now().date():
+                    titulo = 'Membresía vencida'
+                    mensaje = (
+                        f"Hola {membresia.socio.nombre}!\n"
+                        f"Te informamos que tu membresía del plan "
+                        f"{membresia.plan.nombre} se encuentra vencida desde el "
+                        f"{membresia.fecha_fin.strftime('%d/%m/%Y')}.\n"
+                        "Por favor, contacta con nosotros para renovarla."
+                    )
+                else:
+                    titulo = 'Membresía a vencer'
+                    mensaje = (
+                        f"Hola {membresia.socio.nombre}!\n"
+                        f"Te informamos que tu membresía del plan "
+                        f"{membresia.plan.nombre} vencerá en el dia "
+                        f"{membresia.fecha_fin.strftime('%d/%m/%Y')}.\n"
+                        "Por favor, contacta con nosotros para renovarla."
+                    )
+
+                # Limpiamos el número de teléfono (asumiendo formato +549xxxxxxxxxx)
 
                 try:
-                    # pywhatkit.sendwhatmsg_instantly envía el mensaje inmediatamente
-                    # pywhatkit.sendwhatmsg_instantly(  # type: ignore
-                    #     phone_no=telefono,
-                    #     message=mensaje,
-                    #     wait_time=10,  # Segundos de espera para enviar el mensaje
-                    #     tab_close=True,  # Cierra la pestaña después de enviar
-                    #     close_time=5  # Segundos de espera para cerrar la pestaña
-                    # )
-                    hora = datetime.datetime.now()
-                    hora_send = hora.hour
-                    minutos_send = hora.minute + 1
-                    pywhatkit.sendwhatmsg(  # type: ignore
-                        telefono, mensaje, hora_send, minutos_send, 10, True, 2)
+                    pywhatkit.sendwhatmsg_instantly(  # type: ignore
+                        phone_no=telefono,
+                        message=mensaje,
+                        tab_close=False,
+                        wait_time=5  # Segundos antes de cerrar la pestaña
+                    )
+                    # Esperar a que WhatsApp Web se cargue
+                    time.sleep(env.int('TIMEOUT_WHATSAPP'))  # type: ignore
+                    # Asegurar que el foco esté en el campo de mensaje
+                    # Click en el centro
+                    pyautogui.click(pyautogui.size()[
+                                    0] // 2, pyautogui.size()[1] // 2)
+                    time.sleep(2)
+                    # Presionar Tab para mover el foco al campo de mensaje si es necesario
+                    pyautogui.press('tab')
+                    pyautogui.press('tab')
+                    pyautogui.press('tab')
+                    time.sleep(1)
+                    # Enviar el mensaje
+                    pyautogui.press('enter')
+                    time.sleep(1)
+                    # Cerrar la pestaña (opcional)
+                    pyautogui.hotkey('ctrl', 'w')
+
+                    # hora = datetime.datetime.now()
+                    # hora_send = hora.hour
+                    # minutos_send = hora.minute + 2
+                    # pywhatkit.sendwhatmsg(  # type: ignore
+                    #     telefono, mensaje, hora_send, minutos_send, 10, True, 3)
 
                     return True
                 except Exception as e:

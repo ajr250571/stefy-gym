@@ -23,7 +23,9 @@
         {% endblock %}
       </tbody>
     </table>
-    <a href="{{ create_url }}" class="btn btn-primary">Agregar</a>
+    {% if create_url %}
+      <a href="{{ create_url }}" class="btn btn-primary">Agregar</a>
+    {% endif %}
   </div>
 {% endblock %}
 

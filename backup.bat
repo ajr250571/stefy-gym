@@ -3,4 +3,3 @@ f:
 cd stefy-gym
 call venv\Scripts\activate
 python backup.py
-echo Backup Completo

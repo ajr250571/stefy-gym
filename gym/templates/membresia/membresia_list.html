@@ -5,9 +5,9 @@
     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown">Envio Masivo de Avisos por WhatsApps y Mails</button>
     <div class="dropdown-menu">
       <a href="{% url 'whatsapp_vencidas' %}" class="dropdown-item"><i class="fab fa-whatsapp"></i> WhatsApp Membresias Vencidas</a>
-      <a href="{% url 'whatsapp_por_vencer' %}" class="dropdown-item"><i class="fab fa-whatsapp"></i> WhatsApp Membresias por Vencer</a>
+      <a href="{% url 'whatsapp_por_vencer' %}" class="dropdown-item"><i class="fab fa-whatsapp"></i> WhatsApp Membresias por Vencer (menor a 7 dias)</a>
       <a href="{% url 'email_vencidas' %}" class="dropdown-item"><i class="fas fa-envelope"></i> Email Membresias Vencidas</a>
-      <a href="{% url 'email_por_vencer' %}" class="dropdown-item"><i class="fas fa-envelope"></i> Email Membresias por Vencer</a>
+      <a href="{% url 'email_por_vencer' %}" class="dropdown-item"><i class="fas fa-envelope"></i> Email Membresias por Vencer (menor a 7 dias)</a>
     </div>
   </div>
   <hr />
@@ -35,7 +35,7 @@
         {% endif %}
       </td>
       <td>
-        {% if membresia.dias_restantes <= 0 %}
+        {% if membresia.dias_restantes < 0 %}
           <span class="badge bg-danger">{{ membresia.dias_restantes }}</span>
         {% else %}
           <span class="badge bg-success">{{ membresia.dias_restantes }}</span>

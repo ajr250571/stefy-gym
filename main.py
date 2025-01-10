@@ -1,4 +1,5 @@
 # main.py
+# pyinstaller pyinstaller_build.spec
 import os
 import sys
 import django

@@ -563,31 +563,6 @@ imported by:
 </div>
 
 <div class="node">
-  <a name="'psycopg2.extensions'"></a>
-  <a target="code" href="" type="text/plain"><tt>'psycopg2.extensions'</tt></a>
-<span class="moduletype">MissingModule</span>  <div class="import">
-imported by:
-    <a href="#django.contrib.gis.db.backends.postgis.adapter">django.contrib.gis.db.backends.postgis.adapter</a>
- &#8226;   <a href="#django.db.backends.postgresql.base">django.db.backends.postgresql.base</a>
-
-  </div>
-
-</div>
-
-<div class="node">
-  <a name="'psycopg2.extras'"></a>
-  <a target="code" href="" type="text/plain"><tt>'psycopg2.extras'</tt></a>
-<span class="moduletype">MissingModule</span>  <div class="import">
-imported by:
-    <a href="#django.contrib.postgres.signals">django.contrib.postgres.signals</a>
- &#8226;   <a href="#django.db.backends.postgresql.base">django.db.backends.postgresql.base</a>
- &#8226;   <a href="#django.db.backends.postgresql.psycopg_any">django.db.backends.postgresql.psycopg_any</a>
-
-  </div>
-
-</div>
-
-<div class="node">
   <a name="'pyodide.ffi'"></a>
   <a target="code" href="" type="text/plain"><tt>'pyodide.ffi'</tt></a>
 <span class="moduletype">MissingModule</span>  <div class="import">
@@ -7776,6 +7751,7 @@ imported by:
  &#8226;   <a href="#pkgutil">pkgutil</a>
  &#8226;   <a href="#platform">platform</a>
  &#8226;   <a href="#pprint">pprint</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
  &#8226;   <a href="#pyautogui">pyautogui</a>
  &#8226;   <a href="#pydoc">pydoc</a>
  &#8226;   <a href="#pygetwindow">pygetwindow</a>
@@ -9031,6 +9007,7 @@ imported by:
  &#8226;   <a href="#django.utils.translation">django.utils.translation</a>
  &#8226;   <a href="#flask.json.provider">flask.json.provider</a>
  &#8226;   <a href="#fractions">fractions</a>
+ &#8226;   <a href="#psycopg2">psycopg2</a>
  &#8226;   <a href="#setuptools.config._validate_pyproject.fastjsonschema_validations">setuptools.config._validate_pyproject.fastjsonschema_validations</a>
  &#8226;   <a href="#statistics">statistics</a>
  &#8226;   <a href="#wikipedia.wikipedia">wikipedia.wikipedia</a>
@@ -9509,9 +9486,24 @@ imports:
  &#8226;   <a href="#django.contrib.messages.utils">django.contrib.messages.utils</a>
  &#8226;   <a href="#django.contrib.messages.views">django.contrib.messages.views</a>
  &#8226;   <a href="#django.contrib.postgres">django.contrib.postgres</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates">django.contrib.postgres.aggregates</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.general">django.contrib.postgres.aggregates.general</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.mixins">django.contrib.postgres.aggregates.mixins</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.statistics">django.contrib.postgres.aggregates.statistics</a>
  &#8226;   <a href="#django.contrib.postgres.apps">django.contrib.postgres.apps</a>
  &#8226;   <a href="#django.contrib.postgres.constraints">django.contrib.postgres.constraints</a>
  &#8226;   <a href="#django.contrib.postgres.expressions">django.contrib.postgres.expressions</a>
+ &#8226;   <a href="#django.contrib.postgres.fields">django.contrib.postgres.fields</a>
+ &#8226;   <a href="#django.contrib.postgres.fields.array">django.contrib.postgres.fields.array</a>
+ &#8226;   <a href="#django.contrib.postgres.fields.citext">django.contrib.postgres.fields.citext</a>
+ &#8226;   <a href="#django.contrib.postgres.fields.hstore">django.contrib.postgres.fields.hstore</a>
+ &#8226;   <a href="#django.contrib.postgres.fields.jsonb">django.contrib.postgres.fields.jsonb</a>
+ &#8226;   <a href="#django.contrib.postgres.fields.ranges">django.contrib.postgres.fields.ranges</a>
+ &#8226;   <a href="#django.contrib.postgres.fields.utils">django.contrib.postgres.fields.utils</a>
+ &#8226;   <a href="#django.contrib.postgres.forms">django.contrib.postgres.forms</a>
+ &#8226;   <a href="#django.contrib.postgres.forms.array">django.contrib.postgres.forms.array</a>
+ &#8226;   <a href="#django.contrib.postgres.forms.hstore">django.contrib.postgres.forms.hstore</a>
+ &#8226;   <a href="#django.contrib.postgres.forms.ranges">django.contrib.postgres.forms.ranges</a>
  &#8226;   <a href="#django.contrib.postgres.functions">django.contrib.postgres.functions</a>
  &#8226;   <a href="#django.contrib.postgres.indexes">django.contrib.postgres.indexes</a>
  &#8226;   <a href="#django.contrib.postgres.lookups">django.contrib.postgres.lookups</a>
@@ -16519,11 +16511,11 @@ imported by:
   <a target="code" href="///F:/stefy-gym/venv/Lib/site-packages/django/contrib/gis/db/backends/postgis/adapter.py" type="text/plain"><tt>django.contrib.gis.db.backends.postgis.adapter</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
-    <a href="#'psycopg2.extensions'">'psycopg2.extensions'</a>
- &#8226;   <a href="#django.contrib.gis.db.backends.postgis">django.contrib.gis.db.backends.postgis</a>
+    <a href="#django.contrib.gis.db.backends.postgis">django.contrib.gis.db.backends.postgis</a>
  &#8226;   <a href="#django.contrib.gis.db.backends.postgis.pgraster">django.contrib.gis.db.backends.postgis.pgraster</a>
  &#8226;   <a href="#django.contrib.gis.geos">django.contrib.gis.geos</a>
  &#8226;   <a href="#django.db.backends.postgresql.psycopg_any">django.db.backends.postgresql.psycopg_any</a>
+ &#8226;   <a href="#psycopg2.extensions">psycopg2.extensions</a>
 
   </div>
   <div class="import">
@@ -19230,6 +19222,7 @@ imports:
   <div class="import">
 imported by:
     <a href="#django">django</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates">django.contrib.postgres.aggregates</a>
  &#8226;   <a href="#django.contrib.postgres.apps">django.contrib.postgres.apps</a>
  &#8226;   <a href="#django.contrib.postgres.constraints">django.contrib.postgres.constraints</a>
  &#8226;   <a href="#django.contrib.postgres.expressions">django.contrib.postgres.expressions</a>
@@ -19247,6 +19240,87 @@ imported by:
  &#8226;   <a href="#django.contrib.postgres.signals">django.contrib.postgres.signals</a>
  &#8226;   <a href="#django.contrib.postgres.utils">django.contrib.postgres.utils</a>
  &#8226;   <a href="#django.contrib.postgres.validators">django.contrib.postgres.validators</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="django.contrib.postgres.aggregates"></a>
+  <a target="code" href="///F:/stefy-gym/venv/Lib/site-packages/django/contrib/postgres/aggregates/__init__.py" type="text/plain"><tt>django.contrib.postgres.aggregates</tt></a>
+<span class="moduletype">Package</span>  <div class="import">
+imports:
+    <a href="#django.contrib.postgres">django.contrib.postgres</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.general">django.contrib.postgres.aggregates.general</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.statistics">django.contrib.postgres.aggregates.statistics</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#django">django</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.general">django.contrib.postgres.aggregates.general</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.mixins">django.contrib.postgres.aggregates.mixins</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.statistics">django.contrib.postgres.aggregates.statistics</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="django.contrib.postgres.aggregates.general"></a>
+  <a target="code" href="///F:/stefy-gym/venv/Lib/site-packages/django/contrib/postgres/aggregates/general.py" type="text/plain"><tt>django.contrib.postgres.aggregates.general</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#django.contrib.postgres.aggregates">django.contrib.postgres.aggregates</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.mixins">django.contrib.postgres.aggregates.mixins</a>
+ &#8226;   <a href="#django.contrib.postgres.fields">django.contrib.postgres.fields</a>
+ &#8226;   <a href="#django.contrib.postgres.fields.ArrayField">django.contrib.postgres.fields.ArrayField</a>
+ &#8226;   <a href="#django.db.models">django.db.models</a>
+ &#8226;   <a href="#django.db.models.BooleanField">django.db.models.BooleanField</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#django">django</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates">django.contrib.postgres.aggregates</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="django.contrib.postgres.aggregates.mixins"></a>
+  <a target="code" href="///F:/stefy-gym/venv/Lib/site-packages/django/contrib/postgres/aggregates/mixins.py" type="text/plain"><tt>django.contrib.postgres.aggregates.mixins</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#django.contrib.postgres.aggregates">django.contrib.postgres.aggregates</a>
+ &#8226;   <a href="#django.core.exceptions">django.core.exceptions</a>
+ &#8226;   <a href="#django.db.models.expressions">django.db.models.expressions</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#django">django</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.general">django.contrib.postgres.aggregates.general</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="django.contrib.postgres.aggregates.statistics"></a>
+  <a target="code" href="///F:/stefy-gym/venv/Lib/site-packages/django/contrib/postgres/aggregates/statistics.py" type="text/plain"><tt>django.contrib.postgres.aggregates.statistics</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#django.contrib.postgres.aggregates">django.contrib.postgres.aggregates</a>
+ &#8226;   <a href="#django.db.models">django.db.models</a>
+ &#8226;   <a href="#django.db.models.IntegerField">django.db.models.IntegerField</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#django">django</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates">django.contrib.postgres.aggregates</a>
 
   </div>
 
@@ -19314,6 +19388,7 @@ imported by:
 imports:
     <a href="#django.contrib.postgres">django.contrib.postgres</a>
  &#8226;   <a href="#django.contrib.postgres.fields">django.contrib.postgres.fields</a>
+ &#8226;   <a href="#django.contrib.postgres.fields.ArrayField">django.contrib.postgres.fields.ArrayField</a>
  &#8226;   <a href="#django.db.models">django.db.models</a>
  &#8226;   <a href="#django.utils.functional">django.utils.functional</a>
 
@@ -19333,6 +19408,7 @@ imported by:
 <span class="moduletype">Package</span>  <div class="import">
 imports:
     <a href="#django.contrib.postgres">django.contrib.postgres</a>
+ &#8226;   <a href="#django.contrib.postgres.fields.ArrayField">django.contrib.postgres.fields.ArrayField</a>
  &#8226;   <a href="#django.contrib.postgres.fields.array">django.contrib.postgres.fields.array</a>
  &#8226;   <a href="#django.contrib.postgres.fields.citext">django.contrib.postgres.fields.citext</a>
  &#8226;   <a href="#django.contrib.postgres.fields.hstore">django.contrib.postgres.fields.hstore</a>
@@ -19342,13 +19418,28 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#django.contrib.postgres.expressions">django.contrib.postgres.expressions</a>
+    <a href="#django">django</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.general">django.contrib.postgres.aggregates.general</a>
+ &#8226;   <a href="#django.contrib.postgres.expressions">django.contrib.postgres.expressions</a>
  &#8226;   <a href="#django.contrib.postgres.fields.array">django.contrib.postgres.fields.array</a>
  &#8226;   <a href="#django.contrib.postgres.fields.citext">django.contrib.postgres.fields.citext</a>
  &#8226;   <a href="#django.contrib.postgres.fields.hstore">django.contrib.postgres.fields.hstore</a>
  &#8226;   <a href="#django.contrib.postgres.fields.jsonb">django.contrib.postgres.fields.jsonb</a>
  &#8226;   <a href="#django.contrib.postgres.fields.ranges">django.contrib.postgres.fields.ranges</a>
  &#8226;   <a href="#django.contrib.postgres.fields.utils">django.contrib.postgres.fields.utils</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="django.contrib.postgres.fields.ArrayField"></a>
+  <a target="code" href="" type="text/plain"><tt>django.contrib.postgres.fields.ArrayField</tt></a>
+<span class="moduletype">MissingModule</span>  <div class="import">
+imported by:
+    <a href="#django.contrib.postgres.aggregates.general">django.contrib.postgres.aggregates.general</a>
+ &#8226;   <a href="#django.contrib.postgres.expressions">django.contrib.postgres.expressions</a>
+ &#8226;   <a href="#django.contrib.postgres.fields">django.contrib.postgres.fields</a>
 
   </div>
 
@@ -19380,7 +19471,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#django.contrib.postgres.fields">django.contrib.postgres.fields</a>
+    <a href="#django">django</a>
+ &#8226;   <a href="#django.contrib.postgres.fields">django.contrib.postgres.fields</a>
  &#8226;   <a href="#django.contrib.postgres.fields.hstore">django.contrib.postgres.fields.hstore</a>
  &#8226;   <a href="#django.contrib.postgres.search">django.contrib.postgres.search</a>
 
@@ -19399,7 +19491,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#django.contrib.postgres.fields">django.contrib.postgres.fields</a>
+    <a href="#django">django</a>
+ &#8226;   <a href="#django.contrib.postgres.fields">django.contrib.postgres.fields</a>
 
   </div>
 
@@ -19426,7 +19519,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#django.contrib.postgres.fields">django.contrib.postgres.fields</a>
+    <a href="#django">django</a>
+ &#8226;   <a href="#django.contrib.postgres.fields">django.contrib.postgres.fields</a>
 
   </div>
 
@@ -19443,7 +19537,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#django.contrib.postgres.fields">django.contrib.postgres.fields</a>
+    <a href="#django">django</a>
+ &#8226;   <a href="#django.contrib.postgres.fields">django.contrib.postgres.fields</a>
 
   </div>
 
@@ -19470,7 +19565,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#django.contrib.postgres.fields">django.contrib.postgres.fields</a>
+    <a href="#django">django</a>
+ &#8226;   <a href="#django.contrib.postgres.fields">django.contrib.postgres.fields</a>
 
   </div>
 
@@ -19486,7 +19582,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#django.contrib.postgres.fields.array">django.contrib.postgres.fields.array</a>
+    <a href="#django">django</a>
+ &#8226;   <a href="#django.contrib.postgres.fields.array">django.contrib.postgres.fields.array</a>
  &#8226;   <a href="#django.contrib.postgres.fields.ranges">django.contrib.postgres.fields.ranges</a>
 
   </div>
@@ -19506,7 +19603,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#django.contrib.postgres.fields.array">django.contrib.postgres.fields.array</a>
+    <a href="#django">django</a>
+ &#8226;   <a href="#django.contrib.postgres.fields.array">django.contrib.postgres.fields.array</a>
  &#8226;   <a href="#django.contrib.postgres.fields.hstore">django.contrib.postgres.fields.hstore</a>
  &#8226;   <a href="#django.contrib.postgres.fields.ranges">django.contrib.postgres.fields.ranges</a>
  &#8226;   <a href="#django.contrib.postgres.forms.array">django.contrib.postgres.forms.array</a>
@@ -19535,7 +19633,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#django.contrib.postgres.forms">django.contrib.postgres.forms</a>
+    <a href="#django">django</a>
+ &#8226;   <a href="#django.contrib.postgres.forms">django.contrib.postgres.forms</a>
 
   </div>
 
@@ -19556,7 +19655,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#django.contrib.postgres.forms">django.contrib.postgres.forms</a>
+    <a href="#django">django</a>
+ &#8226;   <a href="#django.contrib.postgres.forms">django.contrib.postgres.forms</a>
 
   </div>
 
@@ -19579,7 +19679,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#django.contrib.postgres.forms">django.contrib.postgres.forms</a>
+    <a href="#django">django</a>
+ &#8226;   <a href="#django.contrib.postgres.forms">django.contrib.postgres.forms</a>
 
   </div>
 
@@ -19716,13 +19817,13 @@ imported by:
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#'psycopg.types'">'psycopg.types'</a>
- &#8226;   <a href="#'psycopg2.extras'">'psycopg2.extras'</a>
  &#8226;   <a href="#django.contrib.postgres">django.contrib.postgres</a>
  &#8226;   <a href="#django.db">django.db</a>
  &#8226;   <a href="#django.db.backends.base.base">django.db.backends.base.base</a>
  &#8226;   <a href="#django.db.backends.postgresql.psycopg_any">django.db.backends.postgresql.psycopg_any</a>
  &#8226;   <a href="#functools">functools</a>
  &#8226;   <a href="#psycopg2">psycopg2</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
 
   </div>
   <div class="import">
@@ -21935,6 +22036,7 @@ imported by:
  &#8226;   <a href="#django.contrib.gis.utils">django.contrib.gis.utils</a>
  &#8226;   <a href="#django.contrib.gis.utils.layermapping">django.contrib.gis.utils.layermapping</a>
  &#8226;   <a href="#django.contrib.messages.storage.session">django.contrib.messages.storage.session</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.mixins">django.contrib.postgres.aggregates.mixins</a>
  &#8226;   <a href="#django.contrib.postgres.constraints">django.contrib.postgres.constraints</a>
  &#8226;   <a href="#django.contrib.postgres.fields.array">django.contrib.postgres.fields.array</a>
  &#8226;   <a href="#django.contrib.postgres.fields.hstore">django.contrib.postgres.fields.hstore</a>
@@ -25294,8 +25396,6 @@ imported by:
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#'psycopg.pq'">'psycopg.pq'</a>
- &#8226;   <a href="#'psycopg2.extensions'">'psycopg2.extensions'</a>
- &#8226;   <a href="#'psycopg2.extras'">'psycopg2.extras'</a>
  &#8226;   <a href="#asyncio">asyncio</a>
  &#8226;   <a href="#contextlib">contextlib</a>
  &#8226;   <a href="#django.conf">django.conf</a>
@@ -25317,6 +25417,8 @@ imports:
  &#8226;   <a href="#django.utils.version">django.utils.version</a>
  &#8226;   <a href="#psycopg">psycopg</a>
  &#8226;   <a href="#psycopg2">psycopg2</a>
+ &#8226;   <a href="#psycopg2.extensions">psycopg2.extensions</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
  &#8226;   <a href="#psycopg_pool">psycopg_pool</a>
  &#8226;   <a href="#threading">threading</a>
  &#8226;   <a href="#warnings">warnings</a>
@@ -25457,13 +25559,16 @@ imported by:
 imports:
     <a href="#'psycopg.postgres'">'psycopg.postgres'</a>
  &#8226;   <a href="#'psycopg.types'">'psycopg.types'</a>
- &#8226;   <a href="#'psycopg2.extras'">'psycopg2.extras'</a>
  &#8226;   <a href="#django.db.backends.postgresql">django.db.backends.postgresql</a>
  &#8226;   <a href="#enum">enum</a>
  &#8226;   <a href="#functools">functools</a>
  &#8226;   <a href="#ipaddress">ipaddress</a>
  &#8226;   <a href="#psycopg">psycopg</a>
  &#8226;   <a href="#psycopg2">psycopg2</a>
+ &#8226;   <a href="#psycopg2.errors">psycopg2.errors</a>
+ &#8226;   <a href="#psycopg2.extensions">psycopg2.extensions</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
+ &#8226;   <a href="#psycopg2.sql">psycopg2.sql</a>
 
   </div>
   <div class="import">
@@ -26463,6 +26568,8 @@ imported by:
  &#8226;   <a href="#django.contrib.gis.db.models.lookups">django.contrib.gis.db.models.lookups</a>
  &#8226;   <a href="#django.contrib.gis.db.models.sql.conversion">django.contrib.gis.db.models.sql.conversion</a>
  &#8226;   <a href="#django.contrib.gis.utils.layermapping">django.contrib.gis.utils.layermapping</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.general">django.contrib.postgres.aggregates.general</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.statistics">django.contrib.postgres.aggregates.statistics</a>
  &#8226;   <a href="#django.contrib.postgres.apps">django.contrib.postgres.apps</a>
  &#8226;   <a href="#django.contrib.postgres.constraints">django.contrib.postgres.constraints</a>
  &#8226;   <a href="#django.contrib.postgres.expressions">django.contrib.postgres.expressions</a>
@@ -26577,6 +26684,7 @@ imported by:
 <span class="moduletype">MissingModule</span>  <div class="import">
 imported by:
     <a href="#django.contrib.gis.db.models.functions">django.contrib.gis.db.models.functions</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.general">django.contrib.postgres.aggregates.general</a>
  &#8226;   <a href="#django.db.models">django.db.models</a>
  &#8226;   <a href="#django.db.models.query_utils">django.db.models.query_utils</a>
  &#8226;   <a href="#django.db.models.sql.where">django.db.models.sql.where</a>
@@ -26658,6 +26766,7 @@ imported by:
 <span class="moduletype">MissingModule</span>  <div class="import">
 imported by:
     <a href="#django.contrib.gis.db.models.functions">django.contrib.gis.db.models.functions</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.statistics">django.contrib.postgres.aggregates.statistics</a>
  &#8226;   <a href="#django.contrib.postgres.fields.array">django.contrib.postgres.fields.array</a>
  &#8226;   <a href="#django.db.models">django.db.models</a>
  &#8226;   <a href="#django.db.models.base">django.db.models.base</a>
@@ -26944,6 +27053,7 @@ imported by:
  &#8226;   <a href="#django.contrib.admin.checks">django.contrib.admin.checks</a>
  &#8226;   <a href="#django.contrib.admin.views.main">django.contrib.admin.views.main</a>
  &#8226;   <a href="#django.contrib.gis.db.backends.postgis.schema">django.contrib.gis.db.backends.postgis.schema</a>
+ &#8226;   <a href="#django.contrib.postgres.aggregates.mixins">django.contrib.postgres.aggregates.mixins</a>
  &#8226;   <a href="#django.contrib.postgres.constraints">django.contrib.postgres.constraints</a>
  &#8226;   <a href="#django.contrib.postgres.search">django.contrib.postgres.search</a>
  &#8226;   <a href="#django.db.backends.base.operations">django.db.backends.base.operations</a>
@@ -37086,6 +37196,7 @@ imported by:
  &#8226;   <a href="#pkg_resources">pkg_resources</a>
  &#8226;   <a href="#pkgutil">pkgutil</a>
  &#8226;   <a href="#platform">platform</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
  &#8226;   <a href="#pyautogui">pyautogui</a>
  &#8226;   <a href="#pyscreeze">pyscreeze</a>
  &#8226;   <a href="#re">re</a>
@@ -38947,6 +39058,7 @@ imported by:
  &#8226;   <a href="#django.core.validators">django.core.validators</a>
  &#8226;   <a href="#django.db.backends.postgresql.psycopg_any">django.db.backends.postgresql.psycopg_any</a>
  &#8226;   <a href="#django.utils.ipv6">django.utils.ipv6</a>
+ &#8226;   <a href="#psycopg2._ipaddress">psycopg2._ipaddress</a>
  &#8226;   <a href="#urllib.parse">urllib.parse</a>
  &#8226;   <a href="#urllib.request">urllib.request</a>
  &#8226;   <a href="#urllib3.util.ssl_match_hostname">urllib3.util.ssl_match_hostname</a>
@@ -40128,6 +40240,7 @@ imported by:
  &#8226;   <a href="#json.encoder">json.encoder</a>
  &#8226;   <a href="#json.scanner">json.scanner</a>
  &#8226;   <a href="#logging.config">logging.config</a>
+ &#8226;   <a href="#psycopg2._json">psycopg2._json</a>
  &#8226;   <a href="#requests.compat">requests.compat</a>
  &#8226;   <a href="#setuptools._vendor.importlib_metadata">setuptools._vendor.importlib_metadata</a>
  &#8226;   <a href="#setuptools.config._validate_pyproject.error_reporting">setuptools.config._validate_pyproject.error_reporting</a>
@@ -40352,6 +40465,7 @@ imported by:
  &#8226;   <a href="#logging.handlers">logging.handlers</a>
  &#8226;   <a href="#multiprocessing.util">multiprocessing.util</a>
  &#8226;   <a href="#packaging.tags">packaging.tags</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
  &#8226;   <a href="#pywhatkit.remotekit">pywhatkit.remotekit</a>
  &#8226;   <a href="#requests">requests</a>
  &#8226;   <a href="#setuptools._distutils._log">setuptools._distutils._log</a>
@@ -41999,6 +42113,7 @@ imported by:
  &#8226;   <a href="#platform">platform</a>
  &#8226;   <a href="#plistlib">plistlib</a>
  &#8226;   <a href="#posixpath">posixpath</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
  &#8226;   <a href="#py_compile">py_compile</a>
  &#8226;   <a href="#pyautogui">pyautogui</a>
  &#8226;   <a href="#pyautogui._pyautogui_x11">pyautogui._pyautogui_x11</a>
@@ -43149,12 +43264,210 @@ imported by:
 
 <div class="node">
   <a name="psycopg2"></a>
-  <a target="code" href="" type="text/plain"><tt>psycopg2</tt></a>
-<span class="moduletype">MissingModule</span>  <div class="import">
+  <a target="code" href="///F:/stefy-gym/venv/Lib/site-packages/psycopg2/__init__.py" type="text/plain"><tt>psycopg2</tt></a>
+<span class="moduletype">Package</span>  <div class="import">
+imports:
+    <a href="#decimal">decimal</a>
+ &#8226;   <a href="#psycopg2">psycopg2</a>
+ &#8226;   <a href="#psycopg2._psycopg">psycopg2._psycopg</a>
+ &#8226;   <a href="#psycopg2.errors">psycopg2.errors</a>
+ &#8226;   <a href="#psycopg2.extensions">psycopg2.extensions</a>
+
+  </div>
+  <div class="import">
 imported by:
     <a href="#django.contrib.postgres.signals">django.contrib.postgres.signals</a>
  &#8226;   <a href="#django.db.backends.postgresql.base">django.db.backends.postgresql.base</a>
  &#8226;   <a href="#django.db.backends.postgresql.psycopg_any">django.db.backends.postgresql.psycopg_any</a>
+ &#8226;   <a href="#psycopg2">psycopg2</a>
+ &#8226;   <a href="#psycopg2._ipaddress">psycopg2._ipaddress</a>
+ &#8226;   <a href="#psycopg2._json">psycopg2._json</a>
+ &#8226;   <a href="#psycopg2._psycopg">psycopg2._psycopg</a>
+ &#8226;   <a href="#psycopg2._range">psycopg2._range</a>
+ &#8226;   <a href="#psycopg2.errors">psycopg2.errors</a>
+ &#8226;   <a href="#psycopg2.extensions">psycopg2.extensions</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
+ &#8226;   <a href="#psycopg2.sql">psycopg2.sql</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="psycopg2._ipaddress"></a>
+  <a target="code" href="///F:/stefy-gym/venv/Lib/site-packages/psycopg2/_ipaddress.py" type="text/plain"><tt>psycopg2._ipaddress</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#ipaddress">ipaddress</a>
+ &#8226;   <a href="#psycopg2">psycopg2</a>
+ &#8226;   <a href="#psycopg2.extensions">psycopg2.extensions</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#psycopg2.extras">psycopg2.extras</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="psycopg2._json"></a>
+  <a target="code" href="///F:/stefy-gym/venv/Lib/site-packages/psycopg2/_json.py" type="text/plain"><tt>psycopg2._json</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#json">json</a>
+ &#8226;   <a href="#psycopg2">psycopg2</a>
+ &#8226;   <a href="#psycopg2._psycopg">psycopg2._psycopg</a>
+ &#8226;   <a href="#psycopg2.extensions">psycopg2.extensions</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#psycopg2.extensions">psycopg2.extensions</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="psycopg2._psycopg"></a>
+  <tt>psycopg2._psycopg</tt> <span class="moduletype"><tt>F:\stefy-gym\venv\Lib\site-packages\psycopg2\_psycopg.cp312-win_amd64.pyd</tt></span>  <div class="import">
+imports:
+    <a href="#psycopg2">psycopg2</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#psycopg2">psycopg2</a>
+ &#8226;   <a href="#psycopg2._json">psycopg2._json</a>
+ &#8226;   <a href="#psycopg2._range">psycopg2._range</a>
+ &#8226;   <a href="#psycopg2.errors">psycopg2.errors</a>
+ &#8226;   <a href="#psycopg2.extensions">psycopg2.extensions</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="psycopg2._range"></a>
+  <a target="code" href="///F:/stefy-gym/venv/Lib/site-packages/psycopg2/_range.py" type="text/plain"><tt>psycopg2._range</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#psycopg2">psycopg2</a>
+ &#8226;   <a href="#psycopg2._psycopg">psycopg2._psycopg</a>
+ &#8226;   <a href="#psycopg2.extensions">psycopg2.extensions</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
+ &#8226;   <a href="#re">re</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#psycopg2.extensions">psycopg2.extensions</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="psycopg2.errors"></a>
+  <a target="code" href="///F:/stefy-gym/venv/Lib/site-packages/psycopg2/errors.py" type="text/plain"><tt>psycopg2.errors</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#psycopg2">psycopg2</a>
+ &#8226;   <a href="#psycopg2._psycopg">psycopg2._psycopg</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#django.db.backends.postgresql.psycopg_any">django.db.backends.postgresql.psycopg_any</a>
+ &#8226;   <a href="#psycopg2">psycopg2</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="psycopg2.extensions"></a>
+  <a target="code" href="///F:/stefy-gym/venv/Lib/site-packages/psycopg2/extensions.py" type="text/plain"><tt>psycopg2.extensions</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#psycopg2">psycopg2</a>
+ &#8226;   <a href="#psycopg2._json">psycopg2._json</a>
+ &#8226;   <a href="#psycopg2._psycopg">psycopg2._psycopg</a>
+ &#8226;   <a href="#psycopg2._range">psycopg2._range</a>
+ &#8226;   <a href="#re">re</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#django.contrib.gis.db.backends.postgis.adapter">django.contrib.gis.db.backends.postgis.adapter</a>
+ &#8226;   <a href="#django.db.backends.postgresql.base">django.db.backends.postgresql.base</a>
+ &#8226;   <a href="#django.db.backends.postgresql.psycopg_any">django.db.backends.postgresql.psycopg_any</a>
+ &#8226;   <a href="#psycopg2">psycopg2</a>
+ &#8226;   <a href="#psycopg2._ipaddress">psycopg2._ipaddress</a>
+ &#8226;   <a href="#psycopg2._json">psycopg2._json</a>
+ &#8226;   <a href="#psycopg2._range">psycopg2._range</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
+ &#8226;   <a href="#psycopg2.sql">psycopg2.sql</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="psycopg2.extras"></a>
+  <a target="code" href="///F:/stefy-gym/venv/Lib/site-packages/psycopg2/extras.py" type="text/plain"><tt>psycopg2.extras</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#collections">collections</a>
+ &#8226;   <a href="#functools">functools</a>
+ &#8226;   <a href="#logging">logging</a>
+ &#8226;   <a href="#os">os</a>
+ &#8226;   <a href="#psycopg2">psycopg2</a>
+ &#8226;   <a href="#psycopg2._ipaddress">psycopg2._ipaddress</a>
+ &#8226;   <a href="#psycopg2._json">psycopg2._json</a>
+ &#8226;   <a href="#psycopg2._psycopg">psycopg2._psycopg</a>
+ &#8226;   <a href="#psycopg2._range">psycopg2._range</a>
+ &#8226;   <a href="#psycopg2.extensions">psycopg2.extensions</a>
+ &#8226;   <a href="#psycopg2.sql">psycopg2.sql</a>
+ &#8226;   <a href="#re">re</a>
+ &#8226;   <a href="#select">select</a>
+ &#8226;   <a href="#time">time</a>
+ &#8226;   <a href="#uuid">uuid</a>
+ &#8226;   <a href="#warnings">warnings</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#django.contrib.postgres.signals">django.contrib.postgres.signals</a>
+ &#8226;   <a href="#django.db.backends.postgresql.base">django.db.backends.postgresql.base</a>
+ &#8226;   <a href="#django.db.backends.postgresql.psycopg_any">django.db.backends.postgresql.psycopg_any</a>
+ &#8226;   <a href="#psycopg2._json">psycopg2._json</a>
+ &#8226;   <a href="#psycopg2._range">psycopg2._range</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="psycopg2.sql"></a>
+  <a target="code" href="///F:/stefy-gym/venv/Lib/site-packages/psycopg2/sql.py" type="text/plain"><tt>psycopg2.sql</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#psycopg2">psycopg2</a>
+ &#8226;   <a href="#psycopg2.extensions">psycopg2.extensions</a>
+ &#8226;   <a href="#string">string</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#django.db.backends.postgresql.psycopg_any">django.db.backends.postgresql.psycopg_any</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
 
   </div>
 
@@ -44220,6 +44533,9 @@ imported by:
  &#8226;   <a href="#plistlib">plistlib</a>
  &#8226;   <a href="#posixpath">posixpath</a>
  &#8226;   <a href="#pprint">pprint</a>
+ &#8226;   <a href="#psycopg2._range">psycopg2._range</a>
+ &#8226;   <a href="#psycopg2.extensions">psycopg2.extensions</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
  &#8226;   <a href="#pyautogui">pyautogui</a>
  &#8226;   <a href="#pydoc">pydoc</a>
  &#8226;   <a href="#pywhatkit.mail">pywhatkit.mail</a>
@@ -45040,6 +45356,7 @@ imported by:
     <a href="#django.core.management.commands.shell">django.core.management.commands.shell</a>
  &#8226;   <a href="#http.server">http.server</a>
  &#8226;   <a href="#logging.config">logging.config</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
  &#8226;   <a href="#pydoc">pydoc</a>
  &#8226;   <a href="#selectors">selectors</a>
  &#8226;   <a href="#subprocess">subprocess</a>
@@ -50734,6 +51051,7 @@ imported by:
  &#8226;   <a href="#markupsafe">markupsafe</a>
  &#8226;   <a href="#ntpath">ntpath</a>
  &#8226;   <a href="#nturl2path">nturl2path</a>
+ &#8226;   <a href="#psycopg2.sql">psycopg2.sql</a>
  &#8226;   <a href="#setuptools._distutils.fancy_getopt">setuptools._distutils.fancy_getopt</a>
  &#8226;   <a href="#setuptools._distutils.util">setuptools._distutils.util</a>
  &#8226;   <a href="#setuptools._vendor.tomli._parser">setuptools._vendor.tomli._parser</a>
@@ -51612,6 +51930,7 @@ imported by:
  &#8226;   <a href="#multiprocessing.queues">multiprocessing.queues</a>
  &#8226;   <a href="#multiprocessing.synchronize">multiprocessing.synchronize</a>
  &#8226;   <a href="#pkg_resources">pkg_resources</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
  &#8226;   <a href="#pyautogui">pyautogui</a>
  &#8226;   <a href="#pyautogui._pyautogui_osx">pyautogui._pyautogui_osx</a>
  &#8226;   <a href="#pydoc">pydoc</a>
@@ -54580,6 +54899,7 @@ imported by:
  &#8226;   <a href="#django.urls.converters">django.urls.converters</a>
  &#8226;   <a href="#flask.json.provider">flask.json.provider</a>
  &#8226;   <a href="#flask.json.tag">flask.json.tag</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
  &#8226;   <a href="#simple_history.models">simple_history.models</a>
  &#8226;   <a href="#werkzeug.debug">werkzeug.debug</a>
  &#8226;   <a href="#werkzeug.routing.converters">werkzeug.routing.converters</a>
@@ -54749,6 +55069,7 @@ imported by:
  &#8226;   <a href="#pathlib">pathlib</a>
  &#8226;   <a href="#pkg_resources">pkg_resources</a>
  &#8226;   <a href="#pkgutil">pkgutil</a>
+ &#8226;   <a href="#psycopg2.extras">psycopg2.extras</a>
  &#8226;   <a href="#pydoc">pydoc</a>
  &#8226;   <a href="#pyperclip">pyperclip</a>
  &#8226;   <a href="#random">random</a>

@@ -738,3 +738,53 @@ Time: 14:5
 Phone Number: +543814755771
 Message: Hola Armando!Te informamos que tu membresía del plan Mensual se encuentra vencida desde el 09/01/2025.Por favor, contacta con nosotros para renovarla.
 --------------------
+Date: 10/1/2025
+Time: 15:12
+Phone Number: +543814755771
+Message: Hola Fernanda!Te informamos que tu membresía del plan Mensual vencerá en el dia 11/01/2025.Por favor, contacta con nosotros para renovarla.
+--------------------
+Date: 10/1/2025
+Time: 15:13
+Phone Number: +543814755771
+Message: Hola Armando!Te informamos que tu membresía del plan Mensual vencerá en el dia 11/01/2025.Por favor, contacta con nosotros para renovarla.
+--------------------
+Date: 10/1/2025
+Time: 15:17
+Phone Number: +543814755771
+Message: Hola Fernanda!Te informamos que tu membresía del plan Mensual vencerá en el dia 11/01/2025.Por favor, contacta con nosotros para renovarla.
+--------------------
+Date: 10/1/2025
+Time: 15:17
+Phone Number: +543814755771
+Message: Hola Armando!Te informamos que tu membresía del plan Mensual vencerá en el dia 11/01/2025.Por favor, contacta con nosotros para renovarla.
+--------------------
+Date: 10/1/2025
+Time: 15:25
+Phone Number: +543814755771
+Message: Hola Fernanda!Te informamos que tu membresía del plan Mensual vencerá en el dia 11/01/2025.Por favor, contacta con nosotros para renovarla.
+--------------------
+Date: 10/1/2025
+Time: 15:26
+Phone Number: +543814755771
+Message: Hola Armando!Te informamos que tu membresía del plan Mensual vencerá en el dia 11/01/2025.Por favor, contacta con nosotros para renovarla.
+--------------------
+Date: 10/1/2025
+Time: 15:27
+Phone Number: +543814755771
+Message: Hola Fernanda!Te informamos que tu membresía del plan Mensual vencerá en el dia 11/01/2025.Por favor, contacta con nosotros para renovarla.
+--------------------
+Date: 10/1/2025
+Time: 15:27
+Phone Number: +543814755771
+Message: Hola Armando!Te informamos que tu membresía del plan Mensual vencerá en el dia 11/01/2025.Por favor, contacta con nosotros para renovarla.
+--------------------
+Date: 10/1/2025
+Time: 15:29
+Phone Number: +543814755771
+Message: Hola Fernanda!Te informamos que tu membresía del plan Mensual vencerá en el dia 11/01/2025.Por favor, contacta con nosotros para renovarla.
+--------------------
+Date: 10/1/2025
+Time: 15:29
+Phone Number: +543814755771
+Message: Hola Armando!Te informamos que tu membresía del plan Mensual vencerá en el dia 11/01/2025.Por favor, contacta con nosotros para renovarla.
+--------------------

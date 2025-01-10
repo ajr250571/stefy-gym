@@ -176,7 +176,8 @@ class Membresia(models.Model):
                         phone_no=telefono,
                         message=mensaje,
                         tab_close=False,
-                        wait_time=5  # Segundos antes de cerrar la pestaña
+                        # Segundos antes de cerrar la pestaña
+                        wait_time=env.int('WAIT_TIME_WHATSAPP')
                     )
                     # Esperar a que WhatsApp Web se cargue
                     time.sleep(env.int('TIMEOUT_WHATSAPP'))  # type: ignore

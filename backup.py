@@ -74,14 +74,14 @@ def correo_membresias_vencidas():
     for membresia in membresias_vencidas:
         print("-----------------------------------------------------------")
         if membresia.enviar_email(membresia.id):  # type: ignore
-            print(f"Correo enviado a {membresia.socio.nombre_completo}")
+            print(f"Correo enviado a {membresia.socio.nombre_completo()}")
         else:
             print(f"Error al enviar correo a {
-                membresia.socio.nombre_completo}")
+                membresia.socio.nombre_completo()}")
 
     end_time = time.time()
     print("-----------------------------------------------------------")
-    print("Tiempo de ejecución:", (end_time - start_time), "segundos")
+    print("Tiempo de ejecución:", round(end_time - start_time, 6), "segundos")
 
 
 def whatsapp_membresias_vencidas():
@@ -95,32 +95,6 @@ def whatsapp_membresias_vencidas():
         fecha_fin__exact=maniana)
     for membresia in membresias_vencidas:
         print("-----------------------------------------------------------")
-
-        # mensaje = (
-        #     f"Hola {membresia.socio.nombre}!\n"
-        #     f"Te informamos que tu membresía del plan "
-        #     f"{membresia.plan.nombre} vencerá en el dia "
-        #     f"{membresia.fecha_fin.strftime('%d/%m/%Y')}.\n"
-        #     "Por favor, contacta con nosotros para renovarla."
-        # )
-        # telefono = membresia.socio.telefono
-        # if telefono:
-        #     try:
-        #         pywhatkit.sendwhatmsg_instantly(  # type: ignore
-        #             phone_no=telefono, message=mensaje, wait_time=15, tab_close=True, close_time=5)
-        #         print(f"Whatsapp enviado a {membresia.socio.nombre_completo}")
-        #     except Exception as e:
-        #         print(f"Error al enviar whatsapp a {
-        #             membresia.socio.nombre_completo}")
-
-        # if membresia.enviar_whatsapp(membresia.id):  # type: ignore
-        #     print(f"Whatsapp enviado a {membresia.socio.nombre_completo}")
-        # else:
-        #     print(f"Error al enviar whatsapp a {
-        #         membresia.socio.nombre_completo}")
-
-        # time.sleep(5)
-
         mensaje = (
             f"Hola {membresia.socio.nombre}!\n"
             f"Te informamos que tu membresía del plan "
@@ -129,25 +103,23 @@ def whatsapp_membresias_vencidas():
             "Por favor, contacta con nosotros para renovarla."
         )
         if send_whatsapp_message(membresia.socio.telefono, mensaje):  # type: ignore
-            print(f"Whatsapp enviado a {membresia.socio.nombre_completo}")
+            print(f"Whatsapp enviado a {membresia.socio.nombre_completo()}")
         else:
             print(f"Error al enviar whatsapp a {
-                membresia.socio.nombre_completo}")
+                  membresia.socio.nombre_completo()}")
 
     end_time = time.time()
     print("-----------------------------------------------------------")
-    print("Tiempo de ejecución:", (end_time - start_time), "segundos")
+    print("Tiempo de ejecución:", round(end_time - start_time, 6), "segundos")
 
 
 def send_whatsapp_message(phone_number, message):
     """
     Envía un mensaje de WhatsApp usando pywhatkit con manejo de errores
     y confirmación de envío mediante pyautogui.
-
     Args:
         phone_number (str): Número de teléfono incluyendo código de país (ej: '+34612345678')
         message (str): Mensaje a enviar
-
     Returns:
         dict: Resultado de la operación con estado y mensaje
     """
@@ -159,7 +131,8 @@ def send_whatsapp_message(phone_number, message):
             phone_no=phone_number,
             message=message,
             tab_close=False,
-            wait_time=5  # Segundos antes de cerrar la pestaña
+            # Segundos antes de cerrar la pestaña
+            wait_time=env.int('WAIT_TIME_WHATSAPP')
         )
         # Esperar a que WhatsApp Web se cargue
         time.sleep(env.int('TIMEOUT_WHATSAPP'))
@@ -181,28 +154,6 @@ def send_whatsapp_message(phone_number, message):
         return True
     except Exception as e:
         return False
-
-# Vista de Django
-
-
-def send_message(request):
-    if request.method == 'POST':
-        phone = request.POST.get('phone')
-        message = request.POST.get('message')
-
-        if not phone or not message:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'El número de teléfono y el mensaje son requeridos'
-            })
-
-        result = send_whatsapp_message(phone, message)
-        return JsonResponse(result)
-
-    return JsonResponse({
-        'status': 'error',
-        'message': 'Método no permitido'
-    })
 
 
 enviar_email = env.bool('ENVIAR_EMAIL')

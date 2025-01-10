@@ -1,0 +1,28 @@
+# MANIFEST.in
+# Este archivo especifica archivos adicionales a incluir
+include LICENSE
+include README.md
+include requirements.txt
+include manage.py
+include .env
+
+# Archivos de configuración
+include *.ini
+include *.cfg
+include *.conf
+
+# Direcotio completo desde raiz
+graft core
+graf gym
+
+# Archivos de la aplicación
+recursive-include gym/static *
+recursive-include gym/templates *
+recursive-include gym/migrations *
+
+# Excluir archivos innecesarios
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude __pycache__
+global-exclude *.so
+global-exclude .git*

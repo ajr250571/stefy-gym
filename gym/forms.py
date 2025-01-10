@@ -47,12 +47,12 @@ class PagoForm(forms.ModelForm):
             self.fields['fecha_vencimiento'].widget.attrs['readonly'] = False
 
 
-class PagoFilterForm(forms.Form):
-    fecha_pago_desde = forms.DateField()
-    fecha_pago_hasta = forms.DateField()
+class FechaFilterForm(forms.Form):
+    fecha_desde = forms.DateField()
+    fecha_hasta = forms.DateField()
 
     def __init__(self, *args, **kwargs):
-        super(PagoFilterForm, self).__init__(*args, **kwargs)
+        super(FechaFilterForm, self).__init__(*args, **kwargs)
 
         # Asignar fechas por defecto
         # self.fields['fecha_pago_desde'].initial = date.today() - \
@@ -60,10 +60,10 @@ class PagoFilterForm(forms.Form):
         # self.fields['fecha_pago_hasta'].initial = date.today()
         # Asigna texto para mostrar
 
-        self.fields['fecha_pago_desde'].label = 'Desde'
-        self.fields['fecha_pago_hasta'].label = 'Hasta'
+        self.fields['fecha_desde'].label = 'Desde'
+        self.fields['fecha_hasta'].label = 'Hasta'
         # Asigna formato de fecha
-        self.fields['fecha_pago_desde'].widget = forms.DateInput(
+        self.fields['fecha_desde'].widget = forms.DateInput(
             attrs={'type': 'date'})
-        self.fields['fecha_pago_hasta'].widget = forms.DateInput(
+        self.fields['fecha_hasta'].widget = forms.DateInput(
             attrs={'type': 'date'})

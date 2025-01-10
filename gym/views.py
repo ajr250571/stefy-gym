@@ -1,3 +1,4 @@
+from multiprocessing import Value
 import time
 from ast import In
 from datetime import date, timedelta
@@ -12,7 +13,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.urls import reverse, reverse_lazy
 from gym.models import Asistencia, Membresia, Plan, Socio, Pago
-from .forms import PlanForm, SocioForm, MembresiaForm, PagoForm, PagoFilterForm
+from .forms import PlanForm, SocioForm, MembresiaForm, PagoForm, FechaFilterForm
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -27,6 +28,8 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.core.mail import EmailMessage
 from django.conf import settings
+from django.db.models import Count, F, Value
+from django.db.models.functions import Concat
 
 
 def home(request):
@@ -482,10 +485,10 @@ class pagoListView(PermissionRequiredMixin, ListView):
 
     def get_queryset(self):
         # eryset = super().get_queryset()
-        form = PagoFilterForm(self.request.GET)
+        form = FechaFilterForm(self.request.GET)
         if form.is_valid():
-            fecha_pago_desde = form.cleaned_data['fecha_pago_desde']
-            fecha_pago_hasta = form.cleaned_data['fecha_pago_hasta']
+            fecha_pago_desde = form.cleaned_data['fecha_desde']
+            fecha_pago_hasta = form.cleaned_data['fecha_hasta']
 
             # Aplicar los filtros a la queryset
             if fecha_pago_desde and fecha_pago_hasta:
@@ -516,7 +519,7 @@ class pagoListView(PermissionRequiredMixin, ListView):
         kwargs['create_url'] = reverse_lazy('pago_create')
         kwargs['crumb_url'] = reverse_lazy('pago_list')
         kwargs['crumb_name'] = 'Pagos'
-        kwargs['filter_form'] = PagoFilterForm()
+        kwargs['filter_form'] = FechaFilterForm()
         return super().get_context_data(**kwargs)
 
 
@@ -633,6 +636,7 @@ class MontosMensualesView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['title'] = 'Listado Montos Mensuales de Pagos'
         montos_mensuales = Pago.objects.annotate(
             mes=TruncMonth('fecha_pago')
         ).values('mes').annotate(
@@ -670,7 +674,7 @@ def enviar_whatsapp_membresias_vencidas():
 
     for membresia in membresias_vencidas:
         try:
-            resultado = Membresia.enviar_whatsapp(membresia.id)
+            resultado = Membresia.enviar_whatsapp(membresia.id)  # type: ignore
             if resultado:
                 exitosos += 1
             else:
@@ -678,7 +682,8 @@ def enviar_whatsapp_membresias_vencidas():
             # Esperar 20 segundos entre mensajes para evitar bloqueos
             time.sleep(20)
         except Exception as e:
-            print(f"Error al procesar membresía {membresia.id}: {str(e)}")
+            print(f"Error al procesar membresía {
+                  membresia.id}: {str(e)}")  # type: ignore
             fallidos += 1
 
     return exitosos, fallidos, total
@@ -736,7 +741,8 @@ def enviar_whatsapp_membresias_por_vencer(dias_anticipacion=7):
             exitosos += 1
             time.sleep(20)
         except Exception as e:
-            print(f"Error al procesar membresía {membresia.id}: {str(e)}")
+            print(f"Error al procesar membresía {
+                  membresia.id}: {str(e)}")  # type: ignore
             fallidos += 1
 
     return exitosos, fallidos, total
@@ -772,13 +778,14 @@ def enviar_correo_membresias_vencidas():
 
     for membresia in membresias_vencidas:
         try:
-            resultado = Membresia.enviar_email(membresia.id)
+            resultado = Membresia.enviar_email(membresia.id)  # type: ignore
             if resultado:
                 exitosos += 1
             else:
                 fallidos += 1
         except Exception as e:
-            print(f"Error al procesar membresía {membresia.id}: {str(e)}")
+            print(f"Error al procesar membresía {
+                  membresia.id}: {str(e)}")  # type: ignore
             fallidos += 1
 
     return exitosos, fallidos, total
@@ -800,13 +807,14 @@ def enviar_correo_membresias_por_vencer(dias_anticipacion=7):
 
     for membresia in membresias_por_vencer:
         try:
-            resultado = Membresia.enviar_email(membresia.id)
+            resultado = Membresia.enviar_email(membresia.id)  # type: ignore
             if resultado:
                 exitosos += 1
             else:
                 fallidos += 1
         except Exception as e:
-            print(f"Error al procesar membresía {membresia.id}: {str(e)}")
+            print(f"Error al procesar membresía {
+                  membresia.id}: {str(e)}")  # type: ignore
             fallidos += 1
 
     return exitosos, fallidos, total
@@ -822,3 +830,49 @@ class email_por_vencer(View):
     def get(self, request):
         exitosos, fallidos, total = enviar_correo_membresias_por_vencer()
         return redirect('membresia_list')
+
+
+class AsistenciaListView(PermissionRequiredMixin, ListView):
+    model = Asistencia
+    template_name = 'asistencia/asistencia_list.html'
+    login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.view_asistencia'
+
+    def get_queryset(self):
+        # eryset = super().get_queryset()
+        form = FechaFilterForm(self.request.GET)
+        if form.is_valid():
+            fecha_desde = form.cleaned_data['fecha_desde']
+            fecha_hasta = form.cleaned_data['fecha_hasta']
+
+            # Aplicar los filtros a la queryset
+            if not fecha_desde or not fecha_hasta:
+                fecha_desde = timezone.now() - relativedelta(months=1)
+                fecha_hasta = timezone.now()
+        else:
+            fecha_desde = timezone.now() - relativedelta(months=1)
+            fecha_hasta = timezone.now()
+
+        return Asistencia.objects.filter(
+            fecha__range=(fecha_desde, fecha_hasta)
+        ).values(
+            # Puedes añadir más campos del socio si los necesitas, como 'socio__nombre'
+            'socio'
+        ).annotate(
+            nombre_completo=Concat(
+                'socio__apellido',  Value(', '), 'socio__nombre'),
+            cantidad=Count('id')
+        ).order_by('nombre_completo')
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
+
+    def get_context_data(self, **kwargs):
+        kwargs['title'] = 'Listado de Asistencias'
+        kwargs['crumb_url'] = reverse_lazy('asistencia_list')
+        kwargs['crumb_name'] = 'Asistencias'
+        kwargs['filter_form'] = FechaFilterForm()
+        return super().get_context_data(**kwargs)

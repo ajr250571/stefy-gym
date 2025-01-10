@@ -1,0 +1,26 @@
+{% extends 'list.html' %}
+{% load crispy_forms_tags %}
+
+{% block filtro %}
+  <form class="form-inline" method="get">
+    {% csrf_token %}
+    {{ filter_form|crispy }}
+    <button class="btn btn-info" type="submit"><i class="fas fa-filter"></i> Filtrar</button>
+  </form>
+  <hr />
+{% endblock %}
+
+{% block thead %}
+  <tr>
+    <th scope="col">Socio</th>
+    <th scope="col">Asistencias</th>
+  </tr>
+{% endblock %}
+{% block tbody %}
+  {% for asistencia in object_list %}
+    <tr>
+      <td>{{ asistencia.nombre_completo }}</td>
+      <td>{{ asistencia.cantidad }}</td>
+    </tr>
+  {% endfor %}
+{% endblock %}

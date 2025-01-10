@@ -109,6 +109,12 @@
                   <p>Montos Mensuales</p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="{% url 'asistencia_list' %}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Asistencias</p>
+                </a>
+              </li>
             </ul>
           </li>
         {% endif %}
@@ -131,6 +137,19 @@
     input.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
         enlace.click()
+      }
+    })
+    document.addEventListener('keypress', function (event) {
+      // Verifica si el caracter presionado es un número
+      if (/^[0-9]$/.test(event.key)) {
+        // Obtiene el input
+        const searchInput = document.getElementById('search')
+    
+        // Establece el foco en el input
+        searchInput.focus()
+    
+        // Agrega el número al valor actual del input
+        // searchInput.value += event.key
       }
     })
   </script>

@@ -74,4 +74,6 @@ urlpatterns = [
          name='email_vencidas'),
     path('email_por_vencer/', email_por_vencer.as_view(),
          name='email_por_vencer'),
+
+    path('asistencia_list/', AsistenciaListView.as_view(), name='asistencia_list'),
 ]

@@ -788,3 +788,18 @@ Time: 15:29
 Phone Number: +543814755771
 Message: Hola Armando!Te informamos que tu membresía del plan Mensual vencerá en el dia 11/01/2025.Por favor, contacta con nosotros para renovarla.
 --------------------
+Date: 10/1/2025
+Time: 22:35
+Phone Number: +543814755771
+Message: Hola Armando!Te informamos que tu membresía del plan Mensual se encuentra vencida desde el 05/01/2025.Por favor, contacta con nosotros para renovarla.
+--------------------
+Date: 10/1/2025
+Time: 22:36
+Phone Number: +543814755771
+Message: Hola Armando!Te informamos que tu membresía del plan Mensual se encuentra vencida desde el 05/01/2025.Por favor, contacta con nosotros para renovarla.
+--------------------
+Date: 11/1/2025
+Time: 14:23
+Phone Number: +543814755771
+Message: Hola Armando!Te informamos que tu membresía del plan Mensual se encuentra vencida desde el 01/01/2025.Por favor, contacta con nosotros para renovarla.
+--------------------

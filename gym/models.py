@@ -16,7 +16,6 @@ from django.dispatch import receiver
 from django.core.mail import EmailMessage
 from django.conf import settings
 from simple_history.models import HistoricalRecords
-import time
 import environ
 
 

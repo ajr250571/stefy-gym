@@ -14,6 +14,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# stefy.gym.info@gmail.com  ->  Maxi1304
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -43,6 +44,8 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+    '192.168.100.0/24',
+    '192.168.100.75',
 ]
 
 # O si prefieres permitir todos los orígenes en tu red local (menos seguro):
@@ -52,7 +55,7 @@ ALLOWED_HOSTS = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
-    "http://192.168.0.7:8000",  # Tu IP específica
+    "http://192.168.100.75:8000",  # Tu IP específica
 ]
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -153,12 +156,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
 LANGUAGE_CODE = 'es-ar'
-
-TIME_ZONE = 'America/Argentina/Buenos_Aires'
-
+TIME_ZONE = "America/Argentina/Buenos_Aires"
 USE_I18N = True
-
+USE_L10N = True
 USE_TZ = True
+
 
 
 # Static files (CSS, JavaScript, Images)
@@ -182,22 +184,22 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 
 if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# else:
-#     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#     # configura base de dato mysql
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.mysql',
-#             'NAME': env('DB_NAME'),
-#             'USER': env('DB_USER'),
-#             'PASSWORD': env('DB_PASSWORD'),
-#             'HOST': env('DB_HOST'),
-#             'PORT': env('DB_PORT'),
-#             'OPTIONS': {
-#                 'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-#                 'charset': 'utf8mb4',
-#             }
-#         }
-#     }
+    # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    # configura base de dato mysql
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': env('DB_NAME'),
+            'USER': env('DB_USER'),
+            'PASSWORD': env('DB_PASSWORD'),
+            'HOST': env('DB_HOST'),
+            'PORT': env('DB_PORT'),
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+                'charset': 'utf8mb4',
+            }
+        }
+    }

@@ -55,7 +55,6 @@ backups/
 # Distribution / packaging 
 .Python build/ 
 develop-eggs/ 
-# dist/ 
 build/
 downloads/ 
 eggs/ 

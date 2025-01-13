@@ -67,7 +67,7 @@ def correo_membresias_vencidas():
     print("-----------------------------------------------------------")
     print("Enviando correos de membresias vencidas...")
     print(f"Fecha de hoy: {datetime.now().date()}")
-    maniana = datetime.now().date() - timedelta(days=-1)
+    maniana = datetime.now().date() + timedelta(days=1)
     print(f"Fecha de manana: {maniana}")
     membresias_vencidas = Membresia.objects.filter(
         fecha_fin__exact=maniana)
@@ -89,8 +89,8 @@ def whatsapp_membresias_vencidas():
     print("-----------------------------------------------------------")
     print("-----------------------------------------------------------")
     print("Enviando whatsapp de membresias vencidas...")
-    print(f"Fecha de hoy: {datetime.now().date()}")
-    maniana = datetime.now().date() - timedelta(days=-1)
+    print(f"Fecha de hoy: {datetime.now()}")
+    maniana = datetime.now().date() + timedelta(days=1)
     membresias_vencidas = Membresia.objects.filter(
         fecha_fin__exact=maniana)
     for membresia in membresias_vencidas:

@@ -285,7 +285,6 @@ class Pago(models.Model):
         max_length=50, blank=True, null=True, choices=METODO_PAGO, default='EFECTIVO', verbose_name='Metodo de Pago')
     comprobante_nro = models.CharField(
         max_length=50, blank=True, null=True, verbose_name='Nro. de Comprobante')
-    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
         if not self.pk:  # si en un nuevo pago

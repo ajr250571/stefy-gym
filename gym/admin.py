@@ -3,19 +3,17 @@ from simple_history.admin import SimpleHistoryAdmin
 
 from .models import *
 
+@admin.register(Plan)
+class PlanAdmin(SimpleHistoryAdmin):
+    list_display = ('nombre', 'descripcion', 'precio',
+                    'duracion', 'activo')
+    ordering = ('duracion',)
 
 @admin.register(Socio)
 class SocioAdmin(SimpleHistoryAdmin):
     list_display = ('nombre_completo', 'email', 'telefono',
                     'fecha_nacimiento', 'dni', 'direccion', 'activo', 'fecha_alta')
     ordering = ('apellido', 'nombre')
-
-
-@admin.register(Plan)
-class PlanAdmin(SimpleHistoryAdmin):
-    list_display = ('nombre', 'descripcion', 'precio',
-                    'duracion', 'activo')
-    ordering = ('duracion',)
 
 
 @admin.register(Membresia)

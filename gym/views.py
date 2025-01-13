@@ -105,6 +105,8 @@ class planListView(PermissionRequiredMixin, ListView):
         kwargs['crumb_name'] = 'Planes'
         return super().get_context_data(**kwargs)
 
+    def get_queryset(self):
+        return Plan.objects.all().order_by('nombre')
 
 class planCreateView(PermissionRequiredMixin, CreateView):
     model = Plan

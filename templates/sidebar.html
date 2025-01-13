@@ -37,17 +37,18 @@
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
         {% if user.is_authenticated %}
           <li class="nav-item">
-            <a href="{% url 'socio_list' %}" class="nav-link">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Socios</p>
-            </a>
-          </li>
-          <li class="nav-item">
             <a href="{% url 'plan_list' %}" class="nav-link">
               <i class="far fa-circle nav-icon"></i>
               <p>Planes</p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="{% url 'socio_list' %}" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Socios</p>
+            </a>
+          </li>
+
           <li class="nav-item">
             <a href="{% url 'pago_list' %}" class="nav-link">
               <i class="far fa-circle nav-icon"></i>

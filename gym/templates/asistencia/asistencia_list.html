@@ -4,7 +4,7 @@
 {% block filtro %}
   <form class="form-inline" method="get">
     {% csrf_token %}
-    {{ filter_form|crispy }}
+    {{ filter.form|crispy }}
     <button class="btn btn-info" type="submit"><i class="fas fa-filter"></i> Filtrar</button>
   </form>
   <hr />
@@ -17,7 +17,7 @@
   </tr>
 {% endblock %}
 {% block tbody %}
-  {% for asistencia in object_list %}
+  {% for asistencia in filter.qs %}
     <tr>
       <td>{{ asistencia.nombre_completo }}</td>
       <td>{{ asistencia.cantidad }}</td>

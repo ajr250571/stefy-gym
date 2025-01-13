@@ -1,4 +1,14 @@
 {% extends 'list.html' %}
+{% load crispy_forms_tags %}
+
+{% block filtro %}
+  <form class="form-inline" method="get">
+    {% csrf_token %}
+    {{ filter.form|crispy }}
+    <button class="btn btn-info" type="submit"><i class="fas fa-filter"></i> Filtrar</button>
+  </form>
+  <hr />
+{% endblock %}
 
 {% block thead %}
   <div class="btn-group">
@@ -22,7 +32,7 @@
   </tr>
 {% endblock %}
 {% block tbody %}
-  {% for membresia in object_list %}
+  {% for membresia in filter.qs %}
     <tr>
       <td scope="row">{{ membresia.socio }}</td>
       <td>{{ membresia.fecha_inicio }}</td>

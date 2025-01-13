@@ -1,7 +1,7 @@
 from multiprocessing import Value
 import time
 from ast import In
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from django.utils import timezone
 from os import error
 from django.db.models.base import Model as Model
@@ -30,6 +30,11 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from django.db.models import Count, F, Value
 from django.db.models.functions import Concat
+from .filters import MembresiaFilter, PagoFilter, AsistenciaFilter
+from django_filters.views import FilterView
+from django.http import HttpResponse
+import openpyxl
+from openpyxl.styles import Font
 
 
 def home(request):
@@ -107,6 +112,7 @@ class planListView(PermissionRequiredMixin, ListView):
 
     def get_queryset(self):
         return Plan.objects.all().order_by('nombre')
+
 
 class planCreateView(PermissionRequiredMixin, CreateView):
     model = Plan
@@ -257,12 +263,13 @@ class socioDeleteView(PermissionRequiredMixin, DeleteView):
 # Membresias
 
 
-class membresiaListView(PermissionRequiredMixin, ListView):
+class membresiaListView(PermissionRequiredMixin, FilterView):
     model = Membresia
     template_name = 'membresia/membresia_list.html'
     login_url = '/login/'
     permisos_url = '/error_permisos/'
     permission_required = 'gym.view_membresia'
+    filterset_class = MembresiaFilter
 
     def handle_no_permission(self):
         messages.error(
@@ -478,38 +485,23 @@ class membresiaDeleteView(PermissionRequiredMixin, DeleteView):
 
 # Pagos
 
-class pagoListView(PermissionRequiredMixin, ListView):
+class pagoListView(PermissionRequiredMixin, FilterView):
     model = Pago
     template_name = 'pago/pago_list.html'
     login_url = '/login/'
     permisos_url = '/error_permisos/'
     permission_required = 'gym.view_pago'
+    filterset_class = PagoFilter
 
-    def get_queryset(self):
-        # eryset = super().get_queryset()
-        form = FechaFilterForm(self.request.GET)
-        if form.is_valid():
-            fecha_pago_desde = form.cleaned_data['fecha_desde']
-            fecha_pago_hasta = form.cleaned_data['fecha_hasta']
-
-            # Aplicar los filtros a la queryset
-            if fecha_pago_desde and fecha_pago_hasta:
-                # ueryset = queryset.filter(fecha_pago__range=[
-                #   fecha_pago_desde, fecha_pago_hasta
-                # )
-                return Pago.objects.filter(fecha_pago__range=[
-                    fecha_pago_desde, fecha_pago_hasta
-                ]).order_by('-fecha_pago')
-            else:
-                fecha_desde = timezone.now() - relativedelta(months=3)
-                return Pago.objects.filter(fecha_pago__gte=fecha_desde).order_by('-fecha_pago')
-
-        else:
-            fecha_desde = timezone.now() - relativedelta(months=3)
-            return Pago.objects.filter(fecha_pago__gte=fecha_desde).order_by('-fecha_pago')
-
-    # fecha_desde = timezone.now() - relativedelta(months=6)
-    # return Pago.objects.filter(fecha_pago__gte=fecha_desde).order_by('membresia', '-fecha_pago')
+    def get_filterset(self, filterset_class):
+        # Si no hay parámetros en la URL, establecemos el valor inicial
+        if not self.request.GET:
+            return filterset_class(
+                data={'fecha_at': 'month'},
+                queryset=self.get_queryset(),
+                request=self.request
+            )
+        return super().get_filterset(filterset_class)
 
     def handle_no_permission(self):
         messages.error(
@@ -523,6 +515,59 @@ class pagoListView(PermissionRequiredMixin, ListView):
         kwargs['crumb_name'] = 'Pagos'
         kwargs['filter_form'] = FechaFilterForm()
         return super().get_context_data(**kwargs)
+
+    def export_excel(self, request):
+        # Crear un nuevo libro de trabajo y hoja
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Pagos"
+
+        # Definir encabezados
+        headers = ['Membresía', 'Fecha', 'Monto', 'Estado']
+        for col, header in enumerate(headers, 1):
+            cell = ws.cell(row=1, column=col)
+            cell.value = header
+            cell.font = Font(bold=True)
+
+        # Obtener los datos filtrados
+        queryset = self.filterset.qs if hasattr(
+            self, 'filterset') else self.get_queryset()
+
+        # Llenar datos
+        for row, pago in enumerate(queryset, 2):
+            ws.cell(row=row, column=1, value=str(pago.membresia))
+            ws.cell(row=row, column=2, value=pago.fecha_pago.strftime('%Y-%m-%d'))
+            ws.cell(row=row, column=3, value=float(pago.monto))
+            ws.cell(row=row, column=4, value=pago.estado)
+
+        # Ajustar anchos de columna
+        for column in ws.columns:
+            max_length = 0
+            column_letter = openpyxl.utils.get_column_letter(column[0].column)
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = (max_length + 2)
+            ws.column_dimensions[column_letter].width = adjusted_width
+
+        # Crear la respuesta HTTP con el archivo Excel
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = 'attachment; filename=Pagos_{}.xlsx'.format(
+            datetime.now().strftime('%Y%m%d_%H%M%S')
+        )
+
+        wb.save(response)
+        return response
+
+    def get(self, request, *args, **kwargs):
+        if 'export' in request.GET:
+            return self.export_excel(request)
+        return super().get(request, *args, **kwargs)
 
 
 class pagoCreateView(PermissionRequiredMixin, CreateView):
@@ -825,38 +870,59 @@ class email_por_vencer(View):
         return redirect('membresia_list')
 
 
-class AsistenciaListView(PermissionRequiredMixin, ListView):
+class AsistenciaListView(PermissionRequiredMixin, FilterView):
     model = Asistencia
     template_name = 'asistencia/asistencia_list.html'
     login_url = '/login/'
     permisos_url = '/error_permisos/'
     permission_required = 'gym.view_asistencia'
+    filterset_class = AsistenciaFilter
 
-    def get_queryset(self):
-        # eryset = super().get_queryset()
-        form = FechaFilterForm(self.request.GET)
-        if form.is_valid():
-            fecha_desde = form.cleaned_data['fecha_desde']
-            fecha_hasta = form.cleaned_data['fecha_hasta']
+    # def get_queryset(self):
+    #     # eryset = super().get_queryset()
+    #     form = FechaFilterForm(self.request.GET)
+    #     if form.is_valid():
+    #         fecha_desde = form.cleaned_data['fecha_desde']
+    #         fecha_hasta = form.cleaned_data['fecha_hasta']
 
-            # Aplicar los filtros a la queryset
-            if not fecha_desde or not fecha_hasta:
-                fecha_desde = timezone.now() - relativedelta(months=1)
-                fecha_hasta = timezone.now()
-        else:
-            fecha_desde = timezone.now() - relativedelta(months=1)
-            fecha_hasta = timezone.now()
+    #         # Aplicar los filtros a la queryset
+    #         if not fecha_desde or not fecha_hasta:
+    #             fecha_desde = timezone.now() - relativedelta(months=1)
+    #             fecha_hasta = timezone.now()
+    #     else:
+    #         fecha_desde = timezone.now() - relativedelta(months=1)
+    #         fecha_hasta = timezone.now()
 
-        return Asistencia.objects.filter(
-            fecha__range=(fecha_desde, fecha_hasta)
-        ).values(
-            # Puedes añadir más campos del socio si los necesitas, como 'socio__nombre'
-            'socio'
-        ).annotate(
-            nombre_completo=Concat(
+    #     return Asistencia.objects.filter(
+    #         fecha__range=(fecha_desde, fecha_hasta)
+    #     ).values(
+    #         # Puedes añadir más campos del socio si los necesitas, como 'socio__nombre'
+    #         'socio'
+    #     ).annotate(
+    #         nombre_completo=Concat(
+    #             'socio__apellido',  Value(', '), 'socio__nombre'),
+    #         cantidad=Count('id')
+    #     ).order_by('nombre_completo')
+
+    def get_filterset(self, filterset_class):
+        # Si no hay parámetros en la URL, establecemos el valor inicial
+        if not self.request.GET:
+            return filterset_class(
+                data={'fecha_at': 'month'},
+                # cuenta asistencias por socio
+                queryset=self.get_queryset().values('socio').annotate(nombre_completo=Concat(
+                    'socio__apellido',  Value(', '), 'socio__nombre'),
+                    cantidad=Count('id')).order_by('nombre_completo'),
+                request=self.request
+            )
+        # si hay parametros en la URL, cuenta asistencias por socio
+        return filterset_class(
+            data=self.request.GET,
+            queryset=self.get_queryset().values('socio').annotate(nombre_completo=Concat(
                 'socio__apellido',  Value(', '), 'socio__nombre'),
-            cantidad=Count('id')
-        ).order_by('nombre_completo')
+                cantidad=Count('id')).order_by('nombre_completo'),
+            request=self.request
+        )
 
     def handle_no_permission(self):
         messages.error(
@@ -865,5 +931,6 @@ class AsistenciaListView(PermissionRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         kwargs['title'] = 'Listado de Asistencias'
-        kwargs['filter_form'] = FechaFilterForm()
+        # kwargs['filter_form'] = FechaFilterForm()
+        kwargs['filter'] = self.filterset
         return super().get_context_data(**kwargs)

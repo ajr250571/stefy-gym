@@ -4,8 +4,11 @@
 {% block filtro %}
   <form class="form-inline" method="get">
     {% csrf_token %}
-    {{ filter_form|crispy }}
+    {{ filter.form|crispy }}
     <button class="btn btn-info" type="submit"><i class="fas fa-filter"></i> Filtrar</button>
+    {% comment %}
+    <a href="?export=true" class="btn btn-success ml-2">Exportar a Excel</a>
+    {% endcomment %}
   </form>
   <hr />
 {% endblock %}
@@ -20,7 +23,7 @@
   </tr>
 {% endblock %}
 {% block tbody %}
-  {% for pago in object_list %}
+  {% for pago in filter.qs %}
     <tr>
       <td scope="row">{{ pago.membresia }}</td>
       <td>{{ pago.fecha_pago }}</td>

@@ -1,5 +1,13 @@
 {% extends 'list.html' %}
 
+{% load crispy_forms_tags %}
+
+{% block filtro %}
+  {% if user.is_superuser %}
+    <a href="?export=true" class="btn btn-success ml-2">Exportar Excel</a>
+  {% endif %}
+  <hr />
+{% endblock %}
 {% block thead %}
   <tr>
     <th scope="col">Nombre Completo</th>

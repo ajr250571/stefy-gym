@@ -6,9 +6,10 @@
     {% csrf_token %}
     {{ filter.form|crispy }}
     <button class="btn btn-info" type="submit"><i class="fas fa-filter"></i> Filtrar</button>
-    {% comment %}
-    <a href="?export=true" class="btn btn-success ml-2">Exportar a Excel</a>
-    {% endcomment %}
+
+    {% if user.is_superuser %}
+      <a href="?export=true" class="btn btn-success ml-2">Exportar Excel</a>
+    {% endif %}
   </form>
   <hr />
 {% endblock %}

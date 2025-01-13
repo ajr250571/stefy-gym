@@ -6,13 +6,17 @@
     {% csrf_token %}
     {{ filter.form|crispy }}
     <button class="btn btn-info" type="submit"><i class="fas fa-filter"></i> Filtrar</button>
+
+    {% if user.is_superuser %}
+      <a href="?export=true" class="btn btn-success ml-2">Exportar Excel</a>
+    {% endif %}
   </form>
   <hr />
 {% endblock %}
 
 {% block thead %}
   <div class="btn-group">
-    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown">Envio Masivo de Avisos por WhatsApps y Mails</button>
+    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown">Envio de Avisos por WhatsApp y Mail</button>
     <div class="dropdown-menu">
       <a href="{% url 'whatsapp_vencidas' %}" class="dropdown-item"><i class="fab fa-whatsapp"></i> WhatsApp Membresias Vencidas</a>
       <a href="{% url 'whatsapp_por_vencer' %}" class="dropdown-item"><i class="fab fa-whatsapp"></i> WhatsApp Membresias por Vencer (menor a 7 dias)</a>

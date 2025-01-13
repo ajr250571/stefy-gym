@@ -11,7 +11,7 @@ class MembresiaFilter(django_filters.FilterSet):
 class PagoFilter(django_filters.FilterSet):
     fecha_at = django_filters.DateRangeFilter(
         field_name='fecha_pago',
-        label='Periodo',
+        label='F.Pago',
         initial='week',)
 
     class Meta:
@@ -22,7 +22,7 @@ class PagoFilter(django_filters.FilterSet):
 class AsistenciaFilter(django_filters.FilterSet):
     fecha_at = django_filters.DateRangeFilter(
         field_name='fecha',
-        label='Periodo',
+        label='Fecha',
         initial='week',)
 
     class Meta:

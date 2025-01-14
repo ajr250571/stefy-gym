@@ -1,7 +1,11 @@
 from os import name
 from django.urls import path
-from .views import *
-
+from .views.general_views import home, enviar_whatsapp, whatsapp_vencidas, whatsapp_por_vencer, enviar_email, email_vencidas, email_por_vencer, AsistenciaListView
+from .views.plan_views import planListView, planCreateView, planUpdateView, planDeleteView
+from .views.socio_views import socioListView, socioCreateView, socioUpdateView, socioDeleteView
+from .views.usuario_views import signup, signin, signout
+from .views.membresia_views import membresiaListView, membresiaCreateView, membresiaUpdateView, membresiaDeleteView, membresiaVencidaListView, membresiaDetailView, membresiaSocioCreateView
+from .views.pago_views import pagoListView, pagoCreateView, pagoUpdateView, pagoDeleteView, pagoMembresiaCreateView, MontosMensualesView, errorPermisosView
 
 app_namespace = 'gym'
 
@@ -23,13 +27,6 @@ urlpatterns = [
     path('socio/delete/<int:pk>', socioDeleteView.as_view(), name='socio_delete'),
 
     path('membresia/list/', membresiaListView.as_view(), name='membresia_list'),
-    path('membresia_activa/list/', membresiaActivaListView.as_view(),
-         name='membresia_activa_list'),
-    path('membresia_vencida/list/', membresiaVencidaListView.as_view(),
-         name='membresia_vencida_list'),
-    path('membresia_cancelada/list/', membresiaCanceladaListView.as_view(),
-         name='membresia_cancelada_list'),
-
     path('membresia/create/', membresiaCreateView.as_view(),
          name='membresia_create'),
     path('membresia/update/<int:pk>',

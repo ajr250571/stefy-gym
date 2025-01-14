@@ -8,7 +8,7 @@
     <button class="btn btn-info" type="submit"><i class="fas fa-filter"></i> Filtrar</button>
 
     {% if user.is_superuser %}
-      <a href="?export=true" class="btn btn-success ml-2">Exportar Excel</a>
+      <a href="?export=true" class="btn btn-success ml-2">Exportar</a>
     {% endif %}
   </form>
   <hr />
@@ -19,7 +19,7 @@
     <th scope="col">Membresia</th>
     <th scope="col">F.Pago</th>
     <th scope="col">Monto</th>
-    <th scope="col">Estado</th>
+    {% comment %} <th scope="col">Estado</th> {% endcomment %}
     <th scope="col">Acciones</th>
   </tr>
 {% endblock %}
@@ -29,7 +29,7 @@
       <td scope="row">{{ pago.membresia }}</td>
       <td>{{ pago.fecha_pago }}</td>
       <td>{{ pago.monto }}</td>
-      <td>
+      {% comment %} <td>
         {% if pago.estado == 'PAGADO' %}
           <span class="badge bg-success">Pagada</span>
         {% elif pago.estado == 'PENDIENTE' %}
@@ -37,7 +37,7 @@
         {% else %}
           <span class="badge bg-warning">Vencida</span>
         {% endif %}
-      </td>
+      </td> {% endcomment %}
 
       <td>
         <div class="btn-group">

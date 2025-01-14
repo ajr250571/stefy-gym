@@ -216,16 +216,16 @@ class Membresia(models.Model):
     def vigente(self):
         """Verifica si la membresía está vigente"""
         if self.estado == 'ACTIVA':
-            if self.fecha_fin < timezone.now().date():
+            if self.fecha_fin <= timezone.now().date():
                 self.estado = 'VENCIDA'
                 self.save()
-
         return self.estado == 'ACTIVA'
 
     def actualizar_estado(self):
         """Actualiza el estado de la membresía según la fecha"""
-        if self.fecha_fin < timezone.now().date():
-            self.estado = 'VENCIDA'
+        if self.estado != 'CANCELADA':
+            if self.fecha_fin < timezone.now().date():
+                self.estado = 'VENCIDA'
 
     def inicializar_fecha_fin(self):
         """Actualiza la fecha de finalización de la membresía"""

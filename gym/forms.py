@@ -4,6 +4,7 @@ import re
 from django import forms
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
+from django.utils.dateformat import format
 
 
 from gym.models import Membresia, Plan, Socio, Pago
@@ -15,12 +16,24 @@ class PlanForm(forms.ModelForm):
         fields = ['nombre', 'precio',
                   'duracion', 'descripcion', 'activo']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['duracion'].widget = forms.NumberInput(
+            attrs={'type': 'number'})
+        self.fields['descripcion'].widget = forms.Textarea(
+            attrs={'rows': 3})
+
 
 class SocioForm(forms.ModelForm):
     class Meta:
         model = Socio
         fields = ['nombre', 'apellido', 'email', 'telefono',
                   'fecha_nacimiento', 'dni', 'direccion', 'activo']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['fecha_nacimiento'].widget = forms.DateInput(
+            attrs={'type': 'text'})
 
 
 class MembresiaForm(forms.ModelForm):
@@ -45,7 +58,7 @@ class PagoForm(forms.ModelForm):
         widgets = {
             'fecha_pago': forms.DateInput(
                 attrs={
-                    'type': 'text',
+                    'type': 'date',
                     'class': 'form-control'
                 }
             ),
@@ -89,7 +102,7 @@ class PagoForm(forms.ModelForm):
         super(PagoForm, self).__init__(*args, **kwargs)
         # Si es una nueva instancia (no es edición)
         if not self.instance.pk:
-            self.initial['fecha_pago'] = timezone.now().date()
+            self.initial['fecha_pago'] = format(timezone.now().date(), 'Y-m-d')
         # Inicializar el campo monto como oculto
         if self.instance:
             self.fields['estado'].initial = 'PAGADO'

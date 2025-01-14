@@ -38,7 +38,7 @@ class membresiaListView(PermissionRequiredMixin, FilterView):
 
     def get_queryset(self):
         # 'ACTIVA'
-        return Membresia.objects.filter(estado__in=['ACTIVA', 'VENCIDA'])
+        return Membresia.objects.all()
 
     def export_excel(self, request):
         # Crear un nuevo libro de trabajo y hoja

@@ -7,6 +7,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView, ListView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib import messages
 
+
 class planListView(PermissionRequiredMixin, ListView):
     model = Plan
     template_name = 'plan/plan_list.html'

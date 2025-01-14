@@ -1,1 +1,26 @@
-{% extends 'form.html' %}
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <form method="post" action="">
+    {% csrf_token %}
+    <div class="row g-3">
+      <div class="col-md-6">{{ form.apellido|as_crispy_field }}</div>
+      <div class="col-md-6">{{ form.nombre|as_crispy_field }}</div>
+    </div>
+    <div class="row g-3">
+      <div class="col-md-6">{{ form.email|as_crispy_field }}</div>
+      <div class="col-md-6">{{ form.dni|as_crispy_field }}</div>
+    </div>
+    <div class="row g-3">
+      <div class="col-md-6">{{ form.direccion|as_crispy_field }}</div>
+      <div class="col-md-6">{{ form.telefono|as_crispy_field }}</div>
+    </div>
+    <div class="row g-3">
+      <div class="col-md-6">{{ form.fecha_nacimiento|as_crispy_field }}</div>
+      <div class="col-md-6">{{ form.activo|as_crispy_field }}</div>
+    </div>
+
+    <button class="btn btn-primary mt-4">Grabar</button>
+  </form>
+{% endblock %}

@@ -8,7 +8,7 @@
     <button class="btn btn-info" type="submit"><i class="fas fa-filter"></i> Filtrar</button>
 
     {% if user.is_superuser %}
-      <a href="?export=true" class="btn btn-success ml-2">Exportar Excel</a>
+      <a href="?export=true" class="btn btn-success ml-2">Exportar</a>
     {% endif %}
   </form>
   <hr />
@@ -28,10 +28,12 @@
 
   <tr>
     <th scope="col">Socio</th>
+    <th scope="col">Plan</th>
     <th scope="col">Fecha inicio</th>
     <th scope="col">Fecha fin</th>
-    <th scope="col">Vigente</th>
+    <th scope="col">Vig.</th>
     <th scope="col">Dias</th>
+    <th scope="col">Estado</th>
     <th scope="col">Acciones</th>
   </tr>
 {% endblock %}
@@ -39,6 +41,7 @@
   {% for membresia in filter.qs %}
     <tr>
       <td scope="row">{{ membresia.socio }}</td>
+      <td>{{ membresia.plan }}</td>
       <td>{{ membresia.fecha_inicio }}</td>
       <td>{{ membresia.fecha_fin }}</td>
       <td>
@@ -53,6 +56,17 @@
           <span class="badge bg-danger">{{ membresia.dias_restantes }}</span>
         {% else %}
           <span class="badge bg-success">{{ membresia.dias_restantes }}</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if membresia.estado == 'ACTIVA' %}
+          <span class="badge bg-success">{{ membresia.estado }}</span>
+        {% endif %}
+        {% if membresia.estado == 'VENCIDA' %}
+          <span class="badge bg-danger">{{ membresia.estado }}</span>
+        {% endif %}
+        {% if membresia.estado == 'CANCELADA' %}
+          <span class="badge bg-warning">{{ membresia.estado }}</span>
         {% endif %}
       </td>
       <td>

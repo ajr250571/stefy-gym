@@ -3,6 +3,7 @@ from os import read
 import re
 from django import forms
 from dateutil.relativedelta import relativedelta
+from django.utils import timezone
 
 
 from gym.models import Membresia, Plan, Socio, Pago
@@ -38,13 +39,77 @@ class MembresiaForm(forms.ModelForm):
 class PagoForm(forms.ModelForm):
     class Meta:
         model = Pago
-        fields = ['membresia', 'monto', 'fecha_pago',
-                  'fecha_vencimiento', 'estado', 'metodo_pago', 'comprobante_nro']
+        fields = ['membresia', 'monto', 'estado',  'fecha_pago',
+                  'fecha_vencimiento', 'metodo_pago', 'comprobante_nro']
+        readonly_fields = ['estado', 'monto']
+        widgets = {
+            'fecha_pago': forms.DateInput(
+                attrs={
+                    'type': 'text',
+                    'class': 'form-control'
+                }
+            ),
+            'fecha_vencimiento': forms.DateInput(
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control'
+                }
+            ),
+            'monto': forms.NumberInput(
+                attrs={
+                    'class': 'form-control',
+                    'readonly': True
+                }
+            ),
+
+            'comprobante_nro': forms.NumberInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+            'metodo_pago': forms.Select(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+            'estado': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'readonly': True
+                }
+            ),
+            'membresia': forms.Select(
+                attrs={
+                    'class': 'form-control'
+                }
+            )
+        }
 
     def __init__(self, *args, **kwargs):
         super(PagoForm, self).__init__(*args, **kwargs)
+        # Si es una nueva instancia (no es edición)
+        if not self.instance.pk:
+            self.initial['fecha_pago'] = timezone.now().date()
+        # Inicializar el campo monto como oculto
         if self.instance:
-            self.fields['fecha_vencimiento'].widget.attrs['readonly'] = False
+            self.fields['estado'].initial = 'PAGADO'
+            self.fields['monto'] = forms.DecimalField(
+                widget=forms.HiddenInput(), required=False)
+            # Si hay una instancia (edición), establecer el monto inicial
+        if self.instance and self.instance.pk:
+            self.fields['estado'].initial = 'PAGADO'
+            self.fields['monto'].initial = self.instance.monto
+
+    def clean(self):
+        cleaned_data = super().clean()
+        membresia = cleaned_data.get('membresia')
+
+        if membresia:
+            # Actualizar el monto basado en el plan de la membresía
+            cleaned_data['monto'] = membresia.plan.precio
+            # La fecha de vencimiento se calculará en el modelo
+
+        return cleaned_data
 
 
 class FechaFilterForm(forms.Form):

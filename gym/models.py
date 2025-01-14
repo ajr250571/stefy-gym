@@ -1,11 +1,4 @@
-from ast import arg
-from datetime import timedelta
-import datetime
-from tabnanny import verbose
 import time
-from tkinter import N
-from typing import Iterable
-from venv import create
 from django.db import models
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
@@ -107,7 +100,7 @@ class Membresia(models.Model):
                 mensaje = (
                     f"Hola {membresia.socio.nombre}!\n"
                     f"Te informamos que tu membresía del plan "
-                    f"{membresia.plan.nombre} se encuentra vencida desde el "
+                    f"'{membresia.plan.nombre}' se encuentra vencida desde el "
                     f"{membresia.fecha_fin.strftime('%d/%m/%Y')}.\n"
                     "Por favor, contacta con nosotros para renovarla."
                 )
@@ -154,7 +147,7 @@ class Membresia(models.Model):
                     mensaje = (
                         f"Hola {membresia.socio.nombre}!\n"
                         f"Te informamos que tu membresía del plan "
-                        f"{membresia.plan.nombre} se encuentra vencida desde el "
+                        f"'{membresia.plan.nombre}' se encuentra vencida desde el "
                         f"{membresia.fecha_fin.strftime('%d/%m/%Y')}.\n"
                         "Por favor, contacta con nosotros para renovarla."
                     )
@@ -280,7 +273,7 @@ class Pago(models.Model):
         default=timezone.now, verbose_name='Fecha de Pago')
     fecha_vencimiento = models.DateField(verbose_name='Fecha de Vencimiento')
     estado = models.CharField(
-        max_length=10, choices=ESTADOS, default='PENDIENTE', verbose_name='Estado')
+        max_length=10, choices=ESTADOS, default='PAGADO', verbose_name='Estado')
     metodo_pago = models.CharField(
         max_length=50, blank=True, null=True, choices=METODO_PAGO, default='EFECTIVO', verbose_name='Metodo de Pago')
     comprobante_nro = models.CharField(

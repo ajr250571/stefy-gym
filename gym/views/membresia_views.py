@@ -1,8 +1,8 @@
 from django.db.models.base import Model as Model
 from django.shortcuts import redirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from gym.models import Membresia, Asistencia, Plan
-from gym.filters import  MembresiaFilter
+from gym.filters import MembresiaFilter
 from gym.forms import MembresiaForm
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -10,9 +10,11 @@ from django.contrib import messages
 import openpyxl
 from openpyxl.styles import Font
 from django.http import HttpResponse
-from datetime import datetime, timezone
+from datetime import datetime
 from django_filters.views import FilterView
 from dateutil.relativedelta import relativedelta
+from django.utils import timezone
+
 
 class membresiaListView(PermissionRequiredMixin, FilterView):
     model = Membresia
@@ -242,8 +244,7 @@ class membresiaSocioCreateView(PermissionRequiredMixin, CreateView):
         initial = super().get_initial()
 
         initial['socio'] = self.kwargs['pk']
-        initial['fecha_fin'] = timezone.now().date() + \
-            relativedelta(months=1)
+        initial['fecha_fin'] = timezone.now().date() + relativedelta(months=1)
         # Asigna plan por defecto al socio
         plan = Plan.objects.get(duracion=1)
         initial['plan'] = plan
@@ -288,4 +289,3 @@ class membresiaDeleteView(PermissionRequiredMixin, DeleteView):
     def get_context_data(self, **kwargs):
         kwargs['cancel_url'] = reverse_lazy('membresia_list')
         return super().get_context_data(**kwargs)
-

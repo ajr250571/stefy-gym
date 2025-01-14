@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.db.models.base import Model as Model
 from django.shortcuts import get_object_or_404, redirect, render
 from gym.models import Asistencia, Membresia
-from django.views.generic import  View
+from django.views.generic import View
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib import messages
 from django.db.models import Count, F, Value
@@ -11,13 +11,12 @@ from django.db.models.functions import Concat
 from ..filters import AsistenciaFilter
 from django_filters.views import FilterView
 
-def home(request):
-    return render(request, 'home.html')
 
 class enviar_whatsapp(View):
     def get(self, request, membresia_id):
         Membresia.enviar_whatsapp(membresia_id)
         return redirect('membresia_list')
+
 
 def enviar_whatsapp_membresias_vencidas():
     """
@@ -99,7 +98,7 @@ def enviar_whatsapp_membresias_por_vencer(dias_anticipacion=7):
             # time.sleep(20)
         except Exception as e:
             print(f"Error al procesar membresía {
-                  membresia.id}: {str(e)}")  # type: ignore
+                membresia.id}: {str(e)}")  # type: ignore
             fallidos += 1
 
     return exitosos, fallidos, total
@@ -109,6 +108,7 @@ class whatsapp_vencidas(View):
     def get(self, request):
         exitosos, fallidos, total = enviar_whatsapp_membresias_vencidas()
         return redirect('membresia_list')
+
 
 class whatsapp_por_vencer(View):
     def get(self, request):
@@ -141,10 +141,11 @@ def enviar_correo_membresias_vencidas():
                 fallidos += 1
         except Exception as e:
             print(f"Error al procesar membresía {
-                  membresia.id}: {str(e)}")  # type: ignore
+                membresia.id}: {str(e)}")  # type: ignore
             fallidos += 1
 
     return exitosos, fallidos, total
+
 
 def enviar_correo_membresias_por_vencer(dias_anticipacion=7):
     fecha_limite = timezone.now().date() + timezone.timedelta(days=dias_anticipacion)

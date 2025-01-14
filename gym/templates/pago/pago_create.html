@@ -1,1 +1,162 @@
-{% extends 'form.html' %}
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  {% comment %} {% if messages %}
+    <div class="container">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %} {% endcomment %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <form method="post" id="pagoForm" class="needs-validation" novalidate>
+              {% csrf_token %}
+
+              <!-- Membresía -->
+              <div class="row g-3">
+                <div class="col-md-8 mb-4">
+                  <label for="{{ form.membresia.id_for_label }}" class="form-label fw-bold"><i class="fas fa-user-circle me-2"></i> Membresía</label>
+                  {{ form.membresia }}
+                  {% if form.membresia.errors %}
+                    <div class="invalid-feedback d-block">{{ form.membresia.errors }}</div>
+                  {% endif %}
+                </div>
+
+                <!-- Monto -->
+                <div class="col-md-4 mb-4">
+                  <label for="monto_display" class="form-label fw-bold"><i class="fas fa-dollar-sign me-2"></i> Monto</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="text" id="monto_display" class="form-control" readonly />
+                  </div>
+                  {{ form.monto }}
+                </div>
+              </div>
+
+              <div class="row g-3">
+                <!-- Fecha de Pago -->
+                <div class="col-md-6 mb-4">
+                  <label for="{{ form.fecha_pago.id_for_label }}" class="form-label fw-bold"><i class="fas fa-calendar me-2"></i> Fecha de Pago</label>
+                  {{ form.fecha_pago }}
+                  {% if form.fecha_pago.errors %}
+                    <div class="invalid-feedback d-block">{{ form.fecha_pago.errors }}</div>
+                  {% endif %}
+                </div>
+                <!-- Fecha de Vencimiento -->
+                <div class="col-md-6 mb-4">
+                  <label for="{{ form.fecha_vencimiento.id_for_label }}" class="form-label fw-bold"><i class="fas fa-calendar me-2"></i> Fecha de Vencimiento</label>
+                  {{ form.fecha_vencimiento }}
+                  {% if form.fecha_vencimiento.errors %}
+                    <div class="invalid-feedback d-block">{{ form.fecha_vencimiento.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+              <!-- Estado -->
+              <div class="mb-4">{{ form.estado|as_crispy_field }}</div>
+              <div class="row g-3">
+                <!-- Método de Pago -->
+                <div class="col-md-4 mb-4">
+                  <label for="{{ form.metodo_pago.id_for_label }}" class="form-label fw-bold"><i class="fas fa-credit-card me-2"></i> Método de Pago</label>
+                  {{ form.metodo_pago }}
+                  {% if form.metodo_pago.errors %}
+                    <div class="invalid-feedback d-block">{{ form.metodo_pago.errors }}</div>
+                  {% endif %}
+                </div>
+
+                <!-- Número de Comprobante -->
+                <div class="col-md-8 mb-4">
+                  <label for="{{ form.comprobante_nro.id_for_label }}" class="form-label fw-bold"><i class="fas fa-receipt me-2"></i> Número de Comprobante</label>
+                  {{ form.comprobante_nro }}
+                  {% if form.comprobante_nro.errors %}
+                    <div class="invalid-feedback d-block">{{ form.comprobante_nro.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Botones -->
+              <div class="d-flex justify-content-end gap-2 mt-4">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i> Guardar</button>
+                <a href="{% url 'pago_list' %}" class="btn btn-warning ml-2"><i class="fas fa-times me-2"></i> Cancelar</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extrajs %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const membresiaSelect = document.getElementById('{{ form.membresia.id_for_label }}')
+      const montoDisplay = document.getElementById('monto_display')
+      const montoInput = document.getElementById('id_monto')
+      const fecha_vencimientoInput = document.getElementById('id_fecha_vencimiento')
+    
+      // Función para formatear números como moneda
+      const formatCurrency = (number) => {
+        return new Intl.NumberFormat('es-AR', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(number)
+      }
+    
+      function actualizarMonto() {
+        const membresiaId = membresiaSelect.value
+        if (membresiaId) {
+          // Mostrar indicador de carga
+          montoDisplay.value = 'Calculando...'
+    
+          fetch(`/pagos/get-membresia-monto/?membresia_id=${membresiaId}`)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                const monto = data.monto
+                const fecha_vencimiento = data.fecha_vencimiento
+                montoDisplay.value = formatCurrency(monto)
+                montoInput.value = monto // Asegurarse de que el campo oculto tenga el valor
+                // Actualizar el campo de fecha de vencimiento en formato dd/mm/yyyy
+                fecha_vencimientoInput.value = fecha_vencimiento
+              } else {
+                montoDisplay.value = 'Error al calcular'
+              }
+            })
+            .catch(() => {
+              montoDisplay.value = 'Error al calcular'
+            })
+        } else {
+          montoDisplay.value = ''
+          montoInput.value = ''
+        }
+      }
+    
+      // Eventos
+      membresiaSelect.addEventListener('change', actualizarMonto)
+    
+      // Inicialización
+      if (membresiaSelect.value) {
+        actualizarMonto()
+      }
+    
+      // Validación del formulario
+      const form = document.getElementById('pagoForm')
+      form.addEventListener('submit', function (event) {
+        if (!montoInput.value) {
+          event.preventDefault()
+          alert('Por favor, seleccione una membresía para establecer el monto.')
+          return false
+        }
+      })
+    })
+  </script>
+{% endblock %}

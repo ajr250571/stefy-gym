@@ -2,7 +2,7 @@ from django.db.models.base import Model as Model
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
 from gym.models import Membresia, Pago
-from gym.filters import  PagoFilter
+from gym.filters import PagoFilter
 from gym.forms import PagoForm
 from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -16,8 +16,10 @@ from dateutil.relativedelta import relativedelta
 from datetime import date, timedelta, datetime
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth
+from django.http import JsonResponse
 
 # Pagos
+
 
 class pagoListView(PermissionRequiredMixin, FilterView):
     model = Pago
@@ -124,6 +126,48 @@ class pagoCreateView(PermissionRequiredMixin, CreateView):
         kwargs['crumb_name'] = 'Pagos'
         return super().get_context_data(**kwargs)
 
+    def form_valid(self, form):
+        try:
+            # Asegurarse de que el monto se establezca correctamente
+            membresia = form.cleaned_data.get('membresia')
+            if membresia:
+                form.instance.monto = membresia.plan.precio
+
+            response = super().form_valid(form)
+            messages.success(self.request, 'Pago registrado exitosamente.')
+            return response
+        except Exception as e:
+            messages.error(self.request, f'Error al guardar el pago: {str(e)}')
+            return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        # Imprimir errores en la consola para debug
+        print("Errores del formulario:", form.errors)
+        print("Datos enviados:", form.data)
+        messages.error(
+            self.request, f'Errores en el formulario: {form.errors}')
+        return super().form_invalid(form)
+
+    def form_valid(self, form):
+        try:
+            # Asegurarse de que todos los campos necesarios estén presentes
+            membresia = form.cleaned_data.get('membresia')
+            if not membresia:
+                form.add_error('membresia', 'Este campo es requerido')
+                return self.form_invalid(form)
+
+            # Establecer los campos calculados
+            form.instance.monto = membresia.plan.precio
+            form.instance.fecha_vencimiento = membresia.fecha_fin
+
+            response = super().form_valid(form)
+            messages.success(self.request, 'Pago registrado exitosamente.')
+            return response
+        except Exception as e:
+            print("Error al guardar:", str(e))
+            messages.error(self.request, f'Error al guardar el pago: {str(e)}')
+            return self.form_invalid(form)
+
 
 class pagoMembresiaCreateView(PermissionRequiredMixin, CreateView):
     model = Pago
@@ -226,3 +270,21 @@ class MontosMensualesView(TemplateView):
 
         context['montos_mensuales'] = montos_mensuales
         return context
+
+
+def get_membresia_monto(request):
+    """Vista para obtener el monto del plan de una membresía vía AJAX"""
+    membresia_id = request.GET.get('membresia_id')
+    try:
+        membresia = Membresia.objects.get(id=membresia_id)
+        return JsonResponse({
+            'monto': float(membresia.plan.precio),
+            'fecha_vencimiento': membresia.fecha_fin,
+            'success': True
+        })
+    except Membresia.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'fecha_vencimiento': membresia.fecha_fin,
+            'error': 'Membresía no encontrada'
+        })

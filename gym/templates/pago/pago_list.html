@@ -17,6 +17,7 @@
 {% block thead %}
   <tr>
     <th scope="col">Membresia</th>
+    <th scope="col">F.Venc.</th>
     <th scope="col">F.Pago</th>
     <th scope="col">Monto</th>
     {% comment %} <th scope="col">Estado</th> {% endcomment %}
@@ -29,8 +30,9 @@
   {% for pago in filter.qs %}
     <tr>
       <td scope="row">
-        <a href="{% url 'pago_detail' pago.id %}">{{ pago.membresia }}</a>
+        <a href="{% url 'pago_detail' pago.id %}"><strong>{{ pago.membresia }}</strong></a>
       </td>
+      <td>{{ pago.fecha_vencimiento }}</td>
       <td>{{ pago.fecha_pago }}</td>
       <td>{{ pago.monto }}</td>
       {% comment %} <td>

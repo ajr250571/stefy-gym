@@ -15,7 +15,7 @@
   {% for plan in object_list %}
     <tr>
       <td scope="row">
-        <a href="{% url 'plan_detail' plan.id %}">{{ plan.nombre }}</a>
+        <a href="{% url 'plan_detail' plan.id %}"><strong>{{ plan.nombre }}</strong></a>
       </td>
       <td>{{ plan.precio }}</td>
       <td>{{ plan.duracion }}</td>

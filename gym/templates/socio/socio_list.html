@@ -22,7 +22,7 @@
   {% for socio in object_list %}
     <tr>
       <td scope="row">
-        <a href="{% url 'socio_detail' socio.id %}">{{ socio.nombre_completo }}</a>
+        <a href="{% url 'socio_detail' socio.id %}"><strong>{{ socio.nombre_completo }}</strong></a>
       </td>
       <td>{{ socio.dni }}</td>
       <td>

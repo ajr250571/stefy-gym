@@ -45,10 +45,10 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+    '192.168.0.0/24',
+    '192.168.0.7',
     # '192.168.100.0/24',
     # '192.168.100.75',
-    # '192.168.0.0/24',
-    # '192.168.0.7'
 ]
 
 # O si prefieres permitir todos los orígenes en tu red local (menos seguro):
@@ -58,8 +58,9 @@ ALLOWED_HOSTS = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
+    "http://192.168.0.7:8000",  # Tu IP específica
     # "http://192.168.100.75:8000",
-    # "http://192.168.0.7:8000",  # Tu IP específica
+
 ]
 CORS_ALLOW_METHODS = [
     'DELETE',

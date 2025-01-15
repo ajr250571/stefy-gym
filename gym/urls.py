@@ -3,7 +3,7 @@ from .views.general_views import enviar_whatsapp, whatsapp_vencidas, whatsapp_po
 from .views.plan_views import planListView, planCreateView, planUpdateView, planDeleteView, planDetailView
 from .views.socio_views import socioListView, socioCreateView, socioUpdateView, socioDeleteView, socioDetailView
 from .views.usuario_views import signup, signin, signout
-from .views.membresia_views import membresiaListView, membresiaCreateView, membresiaUpdateView, membresiaDeleteView, membresiaVencidaListView, membresiaDetailView, membresiaSocioCreateView
+from .views.membresia_views import membresiaListView, membresiaCreateView, membresiaUpdateView, membresiaDeleteView, membresiaVencidaListView, membresiaDetailDniView, membresiaSocioCreateView, membresiaDetailView
 from .views.pago_views import pagoListView, pagoCreateView, pagoUpdateView, pagoDeleteView, pagoMembresiaCreateView, MontosMensualesView, errorPermisosView, get_membresia_monto, pagoDetailView
 from .views.home_views import home
 
@@ -37,6 +37,10 @@ urlpatterns = [
          membresiaUpdateView.as_view(), name='membresia_update'),
     path('membresia/delete/<int:pk>',
          membresiaDeleteView.as_view(), name='membresia_delete'),
+    path('membresia/detail/<int:pk>',
+         membresiaDetailView.as_view(), name='membresia_detail_id'),
+
+
 
     path('pago/list/', pagoListView.as_view(), name='pago_list'),
     path('pago/create/', pagoCreateView.as_view(), name='pago_create'),
@@ -51,7 +55,7 @@ urlpatterns = [
     path('pago_membresia/<int:pk>',
          pagoMembresiaCreateView.as_view(), name='pago_membresia'),
 
-    path('membresia/<str:dni>', membresiaDetailView.as_view(),
+    path('membresia/<str:dni>', membresiaDetailDniView.as_view(),
          name='membresia_detail'),
 
     path('error_permisos/', errorPermisosView.as_view(), name='error_permisos'),

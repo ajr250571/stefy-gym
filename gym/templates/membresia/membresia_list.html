@@ -40,7 +40,9 @@
 {% block tbody %}
   {% for membresia in filter.qs %}
     <tr>
-      <td scope="row">{{ membresia.socio }}</td>
+      <td scope="row">
+        <a href="{% url 'membresia_detail_id' membresia.id %}">{{ membresia.socio }}</a>
+      </td>
       <td>{{ membresia.plan }}</td>
       <td>{{ membresia.fecha_inicio }}</td>
       <td>{{ membresia.fecha_fin }}</td>

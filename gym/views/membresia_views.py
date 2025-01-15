@@ -44,12 +44,12 @@ class membresiaListView(PermissionRequiredMixin, FilterView):
         # Crear un nuevo libro de trabajo y hoja
         wb = openpyxl.Workbook()
         ws = wb.active
-        ws.title = "Membresias"
+        ws.title = "Membresias"  # type: ignore
 
         # Definir encabezados
         headers = ['Socio', 'Plan', 'Fecha Inicio', 'Fecha Fin', 'Estado']
         for col, header in enumerate(headers, 1):
-            cell = ws.cell(row=1, column=col)
+            cell = ws.cell(row=1, column=col)  # type: ignore
             cell.value = header
             cell.font = Font(bold=True)
 
@@ -59,18 +59,21 @@ class membresiaListView(PermissionRequiredMixin, FilterView):
 
         # Llenar datos
         for row, membresia in enumerate(queryset, 2):
-            ws.cell(row=row, column=1, value=str(membresia.socio))
-            ws.cell(row=row, column=2, value=str(membresia.plan))
-            ws.cell(row=row, column=3,
+            ws.cell(row=row, column=1, value=str(  # type: ignore
+                membresia.socio))  # type: ignore
+            ws.cell(row=row, column=2, value=str(  # type: ignore
+                membresia.plan))  # type: ignore
+            ws.cell(row=row, column=3,  # type: ignore
                     value=membresia.fecha_inicio.strftime('%Y-%m-%d'))
-            ws.cell(row=row, column=4,
+            ws.cell(row=row, column=4,  # type: ignore
                     value=membresia.fecha_fin.strftime('%Y-%m-%d'))
-            ws.cell(row=row, column=5, value=membresia.estado)
+            ws.cell(row=row, column=5, value=membresia.estado)  # type: ignore
 
         # Ajustar anchos de columna
-        for column in ws.columns:
+        for column in ws.columns:  # type: ignore
             max_length = 0
-            column_letter = openpyxl.utils.get_column_letter(column[0].column)
+            column_letter = openpyxl.utils.get_column_letter(  # type: ignore
+                column[0].column)  # type: ignore
             for cell in column:
                 try:
                     if len(str(cell.value)) > max_length:
@@ -171,7 +174,7 @@ class membresiaCanceladaListView(PermissionRequiredMixin, ListView):
         return Membresia.objects.filter(estado='CANCELADA')
 
 
-class membresiaDetailView(DetailView):
+class membresiaDetailDniView(DetailView):
     model = Membresia
     template_name = 'membresia/membresia_detail.html'
     login_url = '/login/'
@@ -288,4 +291,23 @@ class membresiaDeleteView(PermissionRequiredMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         kwargs['cancel_url'] = reverse_lazy('membresia_list')
+        return super().get_context_data(**kwargs)
+
+
+class membresiaDetailView(PermissionRequiredMixin, DetailView):
+    model = Membresia
+    template_name = 'membresia/membresia_detail.html'
+    login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.view_membresia'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
+
+    def get_context_data(self, **kwargs):
+        kwargs['title'] = 'Detalle de Membresia'
+        kwargs['crumb_url'] = reverse_lazy('membresia_list')
+        kwargs['crumb_name'] = 'Membresias'
         return super().get_context_data(**kwargs)

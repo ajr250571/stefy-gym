@@ -4,7 +4,7 @@ from django.urls import reverse_lazy, reverse
 from gym.models import Membresia, Pago
 from gym.filters import PagoFilter
 from gym.forms import PagoForm
-from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView
+from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView, DetailView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib import messages
 import openpyxl
@@ -288,3 +288,22 @@ def get_membresia_monto(request):
             'fecha_vencimiento': membresia.fecha_fin,
             'error': 'Membresía no encontrada'
         })
+
+
+class pagoDetailView(PermissionRequiredMixin, DetailView):
+    model = Pago
+    template_name = 'pago/pago_detail.html'
+    login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.view_pago'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
+
+    def get_context_data(self, **kwargs):
+        kwargs['title'] = 'Detalle de Pago'
+        kwargs['crumb_url'] = reverse_lazy('pago_list')
+        kwargs['crumb_name'] = 'Pagos'
+        return super().get_context_data(**kwargs)

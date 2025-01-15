@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from gym.models import Plan
 from gym.forms import PlanForm
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib import messages
 
@@ -87,5 +87,25 @@ class planDeleteView(PermissionRequiredMixin, DeleteView):
         return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
+        kwargs['cancel_url'] = reverse_lazy('plan_list')
+        return super().get_context_data(**kwargs)
+
+
+class planDetailView(PermissionRequiredMixin, DetailView):
+    model = Plan
+    template_name = 'plan/plan_detail.html'
+    login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.view_plan'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar estaacción.')
+        return redirect(self.permisos_url)
+
+    def get_context_data(self, **kwargs):
+        kwargs['title'] = 'Detalle Plan'
+        kwargs['crumb_url'] = reverse_lazy('plan_list')
+        kwargs['crumb_name'] = 'Planes'
         kwargs['cancel_url'] = reverse_lazy('plan_list')
         return super().get_context_data(**kwargs)

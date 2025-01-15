@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
 from gym.models import Socio
 from gym.forms import SocioForm
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib import messages
 import openpyxl
@@ -13,6 +13,7 @@ from django.http import HttpResponse
 from datetime import datetime
 
 # Socios
+
 
 class socioListView(PermissionRequiredMixin, ListView):
     model = Socio
@@ -150,5 +151,25 @@ class socioDeleteView(PermissionRequiredMixin, DeleteView):
         return redirect(self.permisos_url)
 
     def get_context_data(self, **kwargs):
+        kwargs['cancel_url'] = reverse_lazy('socio_list')
+        return super().get_context_data(**kwargs)
+
+
+class socioDetailView(PermissionRequiredMixin, DetailView):
+    model = Socio
+    template_name = 'socio/socio_detail.html'
+    login_url = '/login/'
+    permisos_url = '/error_permisos/'
+    permission_required = 'gym.view_socio'
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'No tienes permisos para realizar esta acción.')
+        return redirect(self.permisos_url)
+
+    def get_context_data(self, **kwargs):
+        kwargs['title'] = 'Detalle Socio'
+        kwargs['crumb_url'] = reverse_lazy('socio_list')
+        kwargs['crumb_name'] = 'Socios'
         kwargs['cancel_url'] = reverse_lazy('socio_list')
         return super().get_context_data(**kwargs)

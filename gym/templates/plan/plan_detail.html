@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Nombre:</strong>
+              <span>{{ plan.nombre }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Precio:</strong>
+              <span>{{ plan.precio }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Meses:</strong>
+              <span>{{ plan.duracion }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Descripción:</strong>
+              <span>{{ plan.descripcion }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Activo:</strong>
+              <span class="badge {{ plan.activo|yesno:'bg-success,bg-danger' }}">{{ plan.activo|yesno:'Si,No' }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

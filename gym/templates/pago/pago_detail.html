@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Membresia:</strong>
+              <span>{{ pago.membresia }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Monto:</strong>
+              <span>${{ pago.monto }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Fecha Pago:</strong>
+              <span>{{ pago.fecha_pago }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Fecha Vencimiento:</strong>
+              <span>{{ pago.fecha_vencimiento }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Metodo Pago:</strong>
+              <span>{{ pago.metodo_pago }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Comprobante Nro:</strong>
+              <span>{{ pago.comprobante_nro }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Estado:</strong>
+              <span>
+                {% if pago.estado == 'PAGADO' %}
+                  <span class="badge bg-success">Pagado</span>
+                {% elif pago.estado == 'PENDIENTE' %}
+                  <span class="badge bg-danger">Pendiente</span>
+                {% else %}
+                  <span class="badge bg-warning">Vencido</span>
+                {% endif %}
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

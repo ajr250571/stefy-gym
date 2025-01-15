@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from gym.models import Membresia, Asistencia, Plan
 from gym.filters import MembresiaFilter
 from gym.forms import MembresiaForm
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, DetailView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib import messages
 import openpyxl

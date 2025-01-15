@@ -13,13 +13,17 @@
     <th scope="col">Nombre Completo</th>
     <th scope="col">DNI</th>
     <th scope="col">Activo</th>
-    <th scope="col">Acciones</th>
+    {% if user.is_superuser %}
+      <th scope="col">Acciones</th>
+    {% endif %}
   </tr>
 {% endblock %}
 {% block tbody %}
   {% for socio in object_list %}
     <tr>
-      <td scope="row">{{ socio.nombre_completo }}</td>
+      <td scope="row">
+        <a href="{% url 'socio_detail' socio.id %}">{{ socio.nombre_completo }}</a>
+      </td>
       <td>{{ socio.dni }}</td>
       <td>
         {% if socio.activo %}
@@ -29,10 +33,12 @@
         {% endif %}
       </td>
       <td>
-        <div class="btn-group">
-          <a href="{% url 'socio_update' socio.id %}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
-          <a href="{% url 'socio_delete' socio.id %}" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
-        </div>
+        {% if user.is_superuser %}
+          <div class="btn-group">
+            <a href="{% url 'socio_update' socio.id %}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+            <a href="{% url 'socio_delete' socio.id %}" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
+          </div>
+        {% endif %}
       </td>
     </tr>
   {% endfor %}

@@ -1,10 +1,10 @@
 from django.urls import path
 from .views.general_views import enviar_whatsapp, whatsapp_vencidas, whatsapp_por_vencer, enviar_email, email_vencidas, email_por_vencer, AsistenciaListView
-from .views.plan_views import planListView, planCreateView, planUpdateView, planDeleteView
-from .views.socio_views import socioListView, socioCreateView, socioUpdateView, socioDeleteView
+from .views.plan_views import planListView, planCreateView, planUpdateView, planDeleteView, planDetailView
+from .views.socio_views import socioListView, socioCreateView, socioUpdateView, socioDeleteView, socioDetailView
 from .views.usuario_views import signup, signin, signout
 from .views.membresia_views import membresiaListView, membresiaCreateView, membresiaUpdateView, membresiaDeleteView, membresiaVencidaListView, membresiaDetailView, membresiaSocioCreateView
-from .views.pago_views import pagoListView, pagoCreateView, pagoUpdateView, pagoDeleteView, pagoMembresiaCreateView, MontosMensualesView, errorPermisosView, get_membresia_monto
+from .views.pago_views import pagoListView, pagoCreateView, pagoUpdateView, pagoDeleteView, pagoMembresiaCreateView, MontosMensualesView, errorPermisosView, get_membresia_monto, pagoDetailView
 from .views.home_views import home
 
 app_namespace = 'gym'
@@ -22,11 +22,13 @@ urlpatterns = [
     path('plan/create/', planCreateView.as_view(), name='plan_create'),
     path('plan/update/<int:pk>', planUpdateView.as_view(), name='plan_update'),
     path('plan/delete/<int:pk>', planDeleteView.as_view(), name='plan_delete'),
+    path('plan/detail/<int:pk>', planDetailView.as_view(), name='plan_detail'),
 
     path('socio/list/', socioListView.as_view(), name='socio_list'),
     path('socio/create/', socioCreateView.as_view(), name='socio_create'),
     path('socio/update/<int:pk>', socioUpdateView.as_view(), name='socio_update'),
     path('socio/delete/<int:pk>', socioDeleteView.as_view(), name='socio_delete'),
+    path('socio/detail/<int:pk>', socioDetailView.as_view(), name='socio_detail'),
 
     path('membresia/list/', membresiaListView.as_view(), name='membresia_list'),
     path('membresia/create/', membresiaCreateView.as_view(),
@@ -40,6 +42,8 @@ urlpatterns = [
     path('pago/create/', pagoCreateView.as_view(), name='pago_create'),
     path('pago/update/<int:pk>', pagoUpdateView.as_view(), name='pago_update'),
     path('pago/delete/<int:pk>', pagoDeleteView.as_view(), name='pago_delete'),
+    path('pago/detail/<int:pk>', pagoDetailView.as_view(), name='pago_detail'),
+
 
     path('vencida/list/', membresiaVencidaListView.as_view(),
          name='membresia_vencida_list'),

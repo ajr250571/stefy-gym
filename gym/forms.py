@@ -101,8 +101,12 @@ class PagoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(PagoForm, self).__init__(*args, **kwargs)
         # Si es una nueva instancia (no es edición)
-        if not self.instance.pk:
+        if self.instance and not self.instance.pk:
+            # format(timezone.now().date(), 'Y-m-d')
             self.initial['fecha_pago'] = format(timezone.now().date(), 'Y-m-d')
+        else:
+            self.initial['fecha_pago'] = format(
+                self.instance.fecha_pago, 'Y-m-d')
         # Inicializar el campo monto como oculto
         if self.instance:
             self.fields['estado'].initial = 'PAGADO'
@@ -110,7 +114,7 @@ class PagoForm(forms.ModelForm):
                 widget=forms.HiddenInput(), required=False)
             # Si hay una instancia (edición), establecer el monto inicial
         if self.instance and self.instance.pk:
-            self.fields['estado'].initial = 'PAGADO'
+            # self.fields['estado'].initial = 'PAGADO'
             self.fields['monto'].initial = self.instance.monto
 
     def clean(self):

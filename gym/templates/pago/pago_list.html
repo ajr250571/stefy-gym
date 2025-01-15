@@ -20,13 +20,17 @@
     <th scope="col">F.Pago</th>
     <th scope="col">Monto</th>
     {% comment %} <th scope="col">Estado</th> {% endcomment %}
-    <th scope="col">Acciones</th>
+    {% if user.is_superuser %}
+      <th scope="col">Acciones</th>
+    {% endif %}
   </tr>
 {% endblock %}
 {% block tbody %}
   {% for pago in filter.qs %}
     <tr>
-      <td scope="row">{{ pago.membresia }}</td>
+      <td scope="row">
+        <a href="{% url 'pago_detail' pago.id %}">{{ pago.membresia }}</a>
+      </td>
       <td>{{ pago.fecha_pago }}</td>
       <td>{{ pago.monto }}</td>
       {% comment %} <td>
@@ -41,8 +45,10 @@
 
       <td>
         <div class="btn-group">
-          <a href="{% url 'pago_update' pago.id %}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
-          <a href="{% url 'pago_delete' pago.id %}" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
+          {% if user.is_superuser %}
+            <a href="{% url 'pago_update' pago.id %}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+            <a href="{% url 'pago_delete' pago.id %}" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
+          {% endif %}
         </div>
       </td>
     </tr>

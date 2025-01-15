@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h2 class="mb-0">{{ socio.nombre_completo }}</h2>
+        </div>
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Apellido:</strong>
+              <span>{{ socio.apellido }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Nombre:</strong>
+              <span>{{ socio.nombre }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>DNI:</strong>
+              <span>{{ socio.dni }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Email:</strong>
+              <span>{{ socio.email }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Direccion:</strong>
+              <span>{{ socio.direccion }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Telefono:</strong>
+              <span>{{ socio.telefono }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Fecha de Nacimiento:</strong>
+              <span>{{ socio.fecha_nacimiento }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Fecha de Alta:</strong>
+              <span>{{ socio.fecha_alta }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Activo:</strong>
+              <span>
+                {% if socio.activo %}
+                  <span class="badge bg-success">Si</span>
+                {% else %}
+                  <span class="badge bg-danger">No</span>
+                {% endif %}
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

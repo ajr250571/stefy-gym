@@ -1,0 +1,27 @@
+{% extends 'list.html' %}
+{% load crispy_forms_tags %}
+
+{% block filtro %}
+  <form method="get" class="form-inline mb-4">
+    {{ filter.form|crispy }}
+    <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Filtrar</button>
+  </form>
+  <hr />
+{% endblock %}
+{% block thead %}
+  <h5>Total Pagado: ${{ total_pagado|floatformat:2 }}</h5>
+  <hr />
+  <tr>
+    <th>Membresia</th>
+    <th>Monto</th>
+  </tr>
+{% endblock %}
+
+{% block tbody %}
+  {% for pago in object_list %}
+    <tr>
+      <td>{{ pago.membresia_apellido }}, {{ pago.membresia_nombre }}</td>
+      <td>${{ pago.total|floatformat:2 }}</td>
+    </tr>
+  {% endfor %}
+{% endblock %}

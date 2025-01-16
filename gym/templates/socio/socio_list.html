@@ -4,7 +4,7 @@
 
 {% block filtro %}
   {% if user.is_superuser %}
-    <a href="?export=true" class="btn btn-success ml-2">Exportar Excel</a>
+    <a href="?export=true" class="btn btn-success ml-2">Exportar</a>
   {% endif %}
   <hr />
 {% endblock %}
@@ -12,6 +12,8 @@
   <tr>
     <th scope="col">Nombre Completo</th>
     <th scope="col">DNI</th>
+    <th scope="col">Email</th>
+    <th scope="col">Telefono</th>
     <th scope="col">Activo</th>
     {% if user.is_superuser %}
       <th scope="col">Acciones</th>
@@ -25,6 +27,8 @@
         <a href="{% url 'socio_detail' socio.id %}"><strong>{{ socio.nombre_completo }}</strong></a>
       </td>
       <td>{{ socio.dni }}</td>
+      <td>{{ socio.email }}</td>
+      <td>{{ socio.telefono }}</td>
       <td>
         {% if socio.activo %}
           <span class="badge bg-success">Si</span>

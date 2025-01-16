@@ -5,6 +5,7 @@
     <th scope="col">Nombre</th>
     <th scope="col">Precio</th>
     <th scope="col">Meses</th>
+    <th scope="col">Descripcion</th>
     <th scope="col">Activo</th>
     {% if user.is_superuser %}
       <th scope="col">Acciones</th>
@@ -19,6 +20,7 @@
       </td>
       <td>{{ plan.precio }}</td>
       <td>{{ plan.duracion }}</td>
+      <td>{{ plan.descripcion }}</td>
       <td>
         {% if plan.activo %}
           <span class="badge bg-success">Si</span>

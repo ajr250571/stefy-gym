@@ -32,20 +32,10 @@
       <td scope="row">
         <a href="{% url 'pago_detail' pago.id %}"><strong>{{ pago.membresia }}</strong></a>
       </td>
-      <td>{{ pago.fecha_vencimiento }}</td>
-      <td>{{ pago.fecha_pago }}</td>
-      <td>{{ pago.monto }}</td>
-      {% comment %} <td>
-        {% if pago.estado == 'PAGADO' %}
-          <span class="badge bg-success">Pagada</span>
-        {% elif pago.estado == 'PENDIENTE' %}
-          <span class="badge bg-danger">Pendiente</span>
-        {% else %}
-          <span class="badge bg-warning">Vencida</span>
-        {% endif %}
-      </td> {% endcomment %}
-
-      <td>
+      <td scope="row">{{ pago.fecha_vencimiento|date:'Y/m/d' }}</td>
+      <td scope="row">{{ pago.fecha_pago|date:'Y/m/d' }}</td>
+      <td scope="row">{{ pago.monto }}</td>
+      <td scope="row">
         <div class="btn-group">
           {% if user.is_superuser %}
             <a href="{% url 'pago_update' pago.id %}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>

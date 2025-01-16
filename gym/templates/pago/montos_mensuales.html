@@ -10,7 +10,7 @@
 {% block tbody %}
   {% for monto in montos_mensuales %}
     <tr>
-      <td>{{ monto.mes|date:'F Y' }}</td>
+      <td>{{ monto.mes|date:'Y/m/d' }}</td>
       <td>${{ monto.total|floatformat:2 }}</td>
     </tr>
   {% endfor %}

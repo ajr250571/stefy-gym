@@ -1,8 +1,9 @@
 from django.db.models.base import Model as Model
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
+from flask.cli import F
 from gym.models import Membresia, Pago
-from gym.filters import PagoFilter
+from gym.filters import PagoFilter, PagoRangeFilter
 from gym.forms import PagoForm
 from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView, DetailView
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -14,7 +15,7 @@ from datetime import datetime, timezone
 from django_filters.views import FilterView
 from dateutil.relativedelta import relativedelta
 from datetime import date, timedelta, datetime
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.db.models.functions import TruncMonth
 from django.http import JsonResponse
 
@@ -34,10 +35,14 @@ class pagoListView(PermissionRequiredMixin, FilterView):
         if not self.request.GET:
             return filterset_class(
                 data={'fecha_at': 'month'},
-                queryset=self.get_queryset(),
+                queryset=self.get_queryset().order_by('-fecha_pago'),
                 request=self.request
             )
-        return super().get_filterset(filterset_class)
+        return filterset_class(
+            data=self.request.GET,
+            queryset=self.get_queryset().order_by('-fecha_pago'),
+            request=self.request
+        )
 
     def handle_no_permission(self):
         messages.error(
@@ -261,7 +266,7 @@ class MontosMensualesView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Listado Montos Mensuales'
+        context['title'] = 'Listado Cajas Mensuales'
         montos_mensuales = Pago.objects.annotate(
             mes=TruncMonth('fecha_pago')
         ).values('mes').annotate(
@@ -307,3 +312,33 @@ class pagoDetailView(PermissionRequiredMixin, DetailView):
         kwargs['crumb_url'] = reverse_lazy('pago_list')
         kwargs['crumb_name'] = 'Pagos'
         return super().get_context_data(**kwargs)
+
+
+class CajaListView(FilterView):
+    model = Pago
+    template_name = 'pago/caja_list.html'
+    filterset_class = PagoRangeFilter
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Pago.objects.select_related('membresia').filter(
+            estado='PAGADO'
+        ).values('membresia').annotate(
+            membresia_nombre=F('membresia__socio__apellido'),
+            membresia_apellido=F('membresia__socio__nombre'),
+            total=Sum('monto')
+        ).order_by('membresia_apellido', 'membresia_nombre')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        queryset = self.get_queryset()
+
+        if self.request.GET:
+            queryset = self.filterset.qs
+
+        # del queryset pagos agrupado mor membresia
+
+        context['total_pagado'] = queryset.aggregate(
+            general=Sum('total'))['general'] or 0
+        context['title'] = 'Listado de Caja'
+        return context

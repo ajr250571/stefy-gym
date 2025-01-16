@@ -4,7 +4,7 @@ from .views.plan_views import planListView, planCreateView, planUpdateView, plan
 from .views.socio_views import socioListView, socioCreateView, socioUpdateView, socioDeleteView, socioDetailView
 from .views.usuario_views import signup, signin, signout
 from .views.membresia_views import membresiaListView, membresiaCreateView, membresiaUpdateView, membresiaDeleteView, membresiaVencidaListView, membresiaDetailDniView, membresiaSocioCreateView, membresiaDetailView
-from .views.pago_views import pagoListView, pagoCreateView, pagoUpdateView, pagoDeleteView, pagoMembresiaCreateView, MontosMensualesView, errorPermisosView, get_membresia_monto, pagoDetailView
+from .views.pago_views import pagoListView, pagoCreateView, pagoUpdateView, pagoDeleteView, pagoMembresiaCreateView, MontosMensualesView, errorPermisosView, get_membresia_monto, pagoDetailView, CajaListView
 from .views.home_views import home
 
 app_namespace = 'gym'
@@ -47,6 +47,7 @@ urlpatterns = [
     path('pago/update/<int:pk>', pagoUpdateView.as_view(), name='pago_update'),
     path('pago/delete/<int:pk>', pagoDeleteView.as_view(), name='pago_delete'),
     path('pago/detail/<int:pk>', pagoDetailView.as_view(), name='pago_detail'),
+    path('caja/list/', CajaListView.as_view(), name='caja_list'),
 
 
     path('vencida/list/', membresiaVencidaListView.as_view(),

@@ -29,8 +29,8 @@
   <tr>
     <th scope="col">Socio</th>
     <th scope="col">Plan</th>
-    <th scope="col">Fecha inicio</th>
-    <th scope="col">Fecha fin</th>
+    <th scope="col">F.Inicio</th>
+    <th scope="col">F.Fin</th>
     <th scope="col">Vig.</th>
     <th scope="col">Dias</th>
     <th scope="col">Estado</th>
@@ -44,8 +44,8 @@
         <a href="{% url 'membresia_detail_id' membresia.id %}"><strong>{{ membresia.socio }}</strong></a>
       </td>
       <td>{{ membresia.plan }}</td>
-      <td>{{ membresia.fecha_inicio }}</td>
-      <td>{{ membresia.fecha_fin }}</td>
+      <td>{{ membresia.fecha_inicio|date:'Y/m/d' }}</td>
+      <td>{{ membresia.fecha_fin|date:'Y/m/d' }}</td>
       <td>
         {% if membresia.vigente %}
           <span class="badge bg-success">Si</span>

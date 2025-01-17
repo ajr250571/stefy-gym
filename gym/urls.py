@@ -1,11 +1,13 @@
 from django.urls import path
-from .views.general_views import enviar_whatsapp, whatsapp_vencidas, whatsapp_por_vencer, enviar_email, email_vencidas, email_por_vencer, AsistenciaListView
+from .views.general_views import enviar_whatsapp, whatsapp_vencidas, whatsapp_por_vencer, enviar_email, email_vencidas, email_por_vencer
+from .views.asistencia_views import AsistenciaListView
 from .views.plan_views import planListView, planCreateView, planUpdateView, planDeleteView, planDetailView
 from .views.socio_views import socioListView, socioCreateView, socioUpdateView, socioDeleteView, socioDetailView
 from .views.usuario_views import signup, signin, signout
 from .views.membresia_views import membresiaListView, membresiaCreateView, membresiaUpdateView, membresiaDeleteView, membresiaVencidaListView, membresiaDetailDniView, membresiaSocioCreateView, membresiaDetailView
 from .views.pago_views import pagoListView, pagoCreateView, pagoUpdateView, pagoDeleteView, pagoMembresiaCreateView, MontosMensualesView, errorPermisosView, get_membresia_monto, pagoDetailView, CajaListView
 from .views.home_views import home
+
 
 app_namespace = 'gym'
 
@@ -87,4 +89,5 @@ urlpatterns = [
 
     path('pagos/get-membresia-monto/',
          get_membresia_monto, name='get_membresia_monto'),
+
 ]

@@ -1,0 +1,26 @@
+{% extends 'list.html' %}
+{% load crispy_forms_tags %}
+
+{% block filtro %}
+  <form class="form-inline" method="get">
+    {% csrf_token %}
+    {{ filter.form|crispy }}
+    <button class="btn btn-info" type="submit"><i class="fas fa-filter"></i> Filtrar</button>
+  </form>
+  <hr />
+{% endblock %}
+
+{% block thead %}
+  <tr>
+    <th scope="col">Socio</th>
+    <th scope="col">Fecha</th>
+  </tr>
+{% endblock %}
+{% block tbody %}
+  {% for asistencia in filter.qs %}
+    <tr>
+      <td>{{ asistencia.socio }}</td>
+      <td>{{ asistencia.fecha }}</td>
+    </tr>
+  {% endfor %}
+{% endblock %}

@@ -38,25 +38,25 @@
         {% if user.is_authenticated %}
           <li class="nav-item">
             <a href="{% url 'plan_list' %}" class="nav-link">
-              <i class="far fa-circle nav-icon"></i>
+              <i class="fas fa-clipboard-list nav-icon"></i>
               <p>Planes</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="{% url 'socio_list' %}" class="nav-link">
-              <i class="far fa-circle nav-icon"></i>
+              <i class="fas fa-users nav-icon"></i>
               <p>Socios</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="{% url 'membresia_list' %}" class="nav-link">
-              <i class="far fa-circle nav-icon"></i>
+              <i class="fas fa-user-friends nav-icon"></i>
               <p>Membresias</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="{% url 'pago_list' %}" class="nav-link">
-              <i class="far fa-circle nav-icon"></i>
+              <i class="fas fa-money-bill nav-icon"></i>
               <p>Pagos</p>
             </a>
           </li>
@@ -99,6 +99,14 @@
   </div>
   <!-- /.sidebar -->
 </aside>
+
+<style>
+  .custom-sidebar {
+    background-color: rgb(250, 232, 128); /* Color de fondo gris claro */
+    color: #333;
+    /* Otros estilos personalizados */
+  }
+</style>
 
 {% block extrajs %}
   <script>

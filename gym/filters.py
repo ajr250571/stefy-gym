@@ -1,7 +1,7 @@
 from datetime import date
 from colorama import init
 import django_filters
-from .models import Membresia, Pago, Asistencia
+from .models import Membresia, Pago, Asistencia, Socio
 from dateutil.relativedelta import relativedelta
 
 
@@ -9,6 +9,12 @@ class MembresiaFilter(django_filters.FilterSet):
     class Meta:
         model = Membresia
         fields = ['socio', 'plan', 'estado']
+
+
+class SocioFilter(django_filters.FilterSet):
+    class Meta:
+        model = Socio
+        fields = ['apellido', 'nombre', 'activo']
 
 
 class PagoFilter(django_filters.FilterSet):

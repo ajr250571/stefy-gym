@@ -11,6 +11,7 @@ from openpyxl.styles import Font
 from openpyxl import Workbook
 from django.http import HttpResponse
 from datetime import datetime
+from gym.filters import SocioFilter
 
 # Socios
 
@@ -38,32 +39,39 @@ class socioListView(PermissionRequiredMixin, ListView):
         # Crear un nuevo libro de trabajo y hoja
         wb = openpyxl.Workbook()
         ws = wb.active
-        ws.title = "Socios"
+        ws.title = "Socios"  # type: ignore
 
         # Definir encabezados
         headers = ['Socio', 'DNI', 'Telefono', 'Email', 'Direccion', 'Activo']
         for col, header in enumerate(headers, 1):
-            cell = ws.cell(row=1, column=col)
+            cell = ws.cell(row=1, column=col)  # type: ignore
             cell.value = header
             cell.font = Font(bold=True)
 
         # Obtener los datos filtrados
-        queryset = self.filterset.qs if hasattr(
+        queryset = self.filterset.qs if hasattr(  # type: ignore
             self, 'filterset') else self.get_queryset()
 
         # Llenar datos
         for row, membresia in enumerate(queryset, 2):
-            ws.cell(row=row, column=1, value=str(membresia.nombre_completo()))
-            ws.cell(row=row, column=2, value=str(membresia.dni))
-            ws.cell(row=row, column=3, value=str(membresia.telefono))
-            ws.cell(row=row, column=4, value=str(membresia.email))
-            ws.cell(row=row, column=5, value=str(membresia.direccion))
-            ws.cell(row=row, column=6, value=str(membresia.activo))
+            ws.cell(row=row, column=1, value=str(  # type: ignore
+                membresia.nombre_completo()))  # type: ignore
+            ws.cell(row=row, column=2, value=str(  # type: ignore
+                membresia.dni))  # type: ignore
+            ws.cell(row=row, column=3, value=str(  # type: ignore
+                membresia.telefono))  # type: ignore
+            ws.cell(row=row, column=4, value=str(  # type: ignore
+                membresia.email))  # type: ignore
+            ws.cell(row=row, column=5, value=str(  # type: ignore
+                membresia.direccion))  # type: ignore
+            ws.cell(row=row, column=6, value=str(  # type: ignore
+                membresia.activo))  # type: ignore
 
         # Ajustar anchos de columna
-        for column in ws.columns:
+        for column in ws.columns:  # type: ignore
             max_length = 0
-            column_letter = openpyxl.utils.get_column_letter(column[0].column)
+            column_letter = openpyxl.utils.get_column_letter(  # type: ignore
+                column[0].column)  # type: ignore
             for cell in column:
                 try:
                     if len(str(cell.value)) > max_length:
@@ -71,6 +79,7 @@ class socioListView(PermissionRequiredMixin, ListView):
                 except:
                     pass
             adjusted_width = (max_length + 2)
+            # type: ignore
             ws.column_dimensions[column_letter].width = adjusted_width
 
         # Crear la respuesta HTTP con el archivo Excel

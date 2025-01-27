@@ -66,3 +66,18 @@ class AsistenciaFilter(django_filters.FilterSet):
     class Meta:
         model = Asistencia
         fields = ['socio', 'fecha_at']
+
+
+class AsistenciaRangeFilter(django_filters.FilterSet):
+    fecha = django_filters.DateFromToRangeFilter()
+    socio = django_filters.ModelChoiceFilter(
+        queryset=Socio.objects.all().order_by('apellido', 'nombre'))
+
+    # Inicializar fecha a hoy
+    # def __init__(self, *args, **kwargs):
+    #     super(AsistenciaRangeFilter, self).__init__(*args, **kwargs)
+    #     self.filters['fecha'].initial = date
+
+    class Meta:
+        model = Asistencia
+        fields = ['socio', 'fecha']

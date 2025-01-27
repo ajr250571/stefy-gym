@@ -60,6 +60,12 @@
               <p>Pagos</p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="{% url 'asistencia_range' %}" class="nav-link">
+              <i class="fas fa-money-bill nav-icon"></i>
+              <p>Asistencias</p>
+            </a>
+          </li>
         {% endif %}
         {% if user.is_superuser and user.is_authenticated %}
           <li class="nav-item menu-open">
@@ -87,7 +93,7 @@
               <li class="nav-item">
                 <a href="{% url 'asistencia_list' %}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Asistencias</p>
+                  <p>Asistencias x Socio</p>
                 </a>
               </li>
             </ul>

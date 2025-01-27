@@ -8,8 +8,9 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib import messages
 from django.db.models import Count, F, Value
 from django.db.models.functions import Concat
-from ..filters import AsistenciaFilter
+from ..filters import AsistenciaFilter, AsistenciaRangeFilter
 from django_filters.views import FilterView
+from django.contrib.auth.decorators import permission_required
 
 
 class AsistenciaListView(PermissionRequiredMixin, FilterView):
@@ -50,3 +51,26 @@ class AsistenciaListView(PermissionRequiredMixin, FilterView):
         # kwargs['filter_form'] = FechaFilterForm()
         kwargs['filter'] = self.filterset
         return super().get_context_data(**kwargs)
+
+
+# type: ignore
+@permission_required('gym.view_asistencia', login_url='/login/')
+def lista_asistencias(request):
+
+    if request.GET:
+        # Si hay filtros, aplicar el filtro de Django Filter
+        asistencia_filter = AsistenciaRangeFilter(
+            request.GET, queryset=Asistencia.objects.all())
+    else:
+        # Si no hay filtros, no cargar ninguna asistencia
+        asistencia_filter = AsistenciaRangeFilter(
+            queryset=Asistencia.objects.none())
+
+    # asistencias = Asistencia.objects.all()
+    # asistencia_filter = AsistenciaRangeFilter(
+    #     request.GET, queryset=asistencias)
+
+    content = {'filter': asistencia_filter,
+               'title': 'Listado de Asistencias'}
+
+    return render(request, 'asistencia/asistencia_range_list.html', content)

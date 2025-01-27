@@ -19,7 +19,7 @@
 {% block tbody %}
   {% for asistencia in filter.qs %}
     <tr>
-      <td>{{ asistencia.socio }}</td>
+      <td>{{ asistencia.socio.nombre_completo }}</td>
       <td>{{ asistencia.fecha }}</td>
     </tr>
   {% endfor %}

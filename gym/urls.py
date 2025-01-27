@@ -1,6 +1,6 @@
 from django.urls import path
 from .views.general_views import enviar_whatsapp, whatsapp_vencidas, whatsapp_por_vencer, enviar_email, email_vencidas, email_por_vencer
-from .views.asistencia_views import AsistenciaListView
+from .views.asistencia_views import AsistenciaListView, lista_asistencias
 from .views.plan_views import planListView, planCreateView, planUpdateView, planDeleteView, planDetailView
 from .views.socio_views import socioListView, socioCreateView, socioUpdateView, socioDeleteView, socioDetailView
 from .views.usuario_views import signup, signin, signout
@@ -65,6 +65,8 @@ urlpatterns = [
 
     path('montos_mensuales/', MontosMensualesView.as_view(),
          name='montos_mensuales'),
+    path('reporte_ingresos/', MontosMensualesView.as_view(),
+         name='reporte_ingresos'),
 
     path('membresia_socio/create/<int:pk>', membresiaSocioCreateView.as_view(),
          name='membresia_socio_create'),
@@ -86,6 +88,7 @@ urlpatterns = [
          name='email_por_vencer'),
 
     path('asistencia_list/', AsistenciaListView.as_view(), name='asistencia_list'),
+    path('asistencia_range/', lista_asistencias, name='asistencia_range'),
 
     path('pagos/get-membresia-monto/',
          get_membresia_monto, name='get_membresia_monto'),

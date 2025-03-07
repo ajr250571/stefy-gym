@@ -1,0 +1,113 @@
+{% extends 'list.html' %}
+{% load crispy_forms_tags %}
+{% load model_tags %}
+
+{% block filtro %}
+<h1>Filtro para {{ model_name }}</h1>
+    
+    <form method="GET" id="filter-form">
+        <div id="filters-container">
+            {% for field, condition, value in filter.data.items %}
+                {% if field != 'page' %}
+                    <div class="filter-row">
+                        <select name="field">
+                            {% for f in model_fields %}
+                                <option value="{{ f.name }}" {% if f.name == field %}selected{% endif %}>
+                                    {{ f.verbose_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        
+                        <select name="condition">
+                            <!-- Las condiciones se cargan dinámicamente con JS -->
+                        </select>
+                        
+                        <input type="text" name="value" value="{{ value }}">
+                        <button type="button" onclick="this.parentElement.remove()">Eliminar</button>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        
+        <button type="button" onclick="addFilter()">Agregar Filtro</button>
+        <button type="submit">Aplicar Filtros</button>
+    </form>
+    <script>
+      const conditions = {
+          'IntegerField': {{ filter.NUMBER_CONDITIONS|json_script:"number_conditions" }},
+          'FloatField': {{ filter.NUMBER_CONDITIONS|json_script:"number_conditions" }},
+          'CharField': {{ filter.TEXT_CONDITIONS|json_script:"text_conditions" }},
+          'TextField': {{ filter.TEXT_CONDITIONS|json_script:"text_conditions" }},
+          'BooleanField': {{ filter.BOOL_CONDITIONS|json_script:"bool_conditions" }},
+          'DateField': {{ filter.DATE_CONDITIONS|json_script:"date_conditions" }},
+          'DateTimeField': {{ filter.DATE_CONDITIONS|json_script:"date_conditions" }}
+      };
+
+      function addFilter() {
+          const container = document.getElementById('filters-container');
+          const row = document.createElement('div');
+          row.className = 'filter-row';
+          row.innerHTML = `
+              <select name="field" onchange="updateConditions(this)">
+                  {% for f in model_fields %}
+                      <option value="{{ f.name }}" data-type="{{ f.get_internal_type }}">{{ f.verbose_name }}</option>
+                  {% endfor %}
+              </select>
+              <select name="condition"></select>
+              <input type="text" name="value">
+              <button type="button" onclick="this.parentElement.remove()">Eliminar</button>
+          `;
+          container.appendChild(row);
+          updateConditions(row.querySelector('select[name="field"]'));
+      }
+
+      function updateConditions(select) {
+          const conditionSelect = select.nextElementSibling;
+          const fieldType = select.selectedOptions[0].dataset.type;
+          const options = conditions[fieldType] || [];
+          conditionSelect.innerHTML = options.map(opt => 
+              `<option value="${opt[0]}">${opt[1]}</option>`
+          ).join('');
+      }
+  </script>
+{% endblock %}
+
+{% block thead %}
+  <tr>
+    <th scope="col">ID</th>
+    <th scope="col">Nombre</th>
+    <th scope="col">Precio</th>
+    <th scope="col">Meses</th>
+    <th scope="col">Activo</th>
+    {% if user.is_superuser %}
+      <th scope="col">Acciones</th>
+    {% endif %}
+  </tr>
+{% endblock %}
+{% block tbody %}
+  {% for plan in object_list %}
+    <tr>
+      <td>{{ plan.id }}</td>
+      <td scope="row">
+        <a href="{% url 'plan_detail' plan.id %}"><strong>{{ plan.nombre }}</strong></a>
+      </td>
+      <td>{{ plan.precio }}</td>
+      <td>{{ plan.duracion }}</td>
+      <td>
+        {% if plan.activo %}
+          <span class="badge bg-success">Si</span>
+        {% else %}
+          <span class="badge bg-danger">No</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if user.is_superuser %}
+          <div class="btn-group">
+            <a href="{% url 'plan_update' plan.id %}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+            <a href="{% url 'plan_delete' plan.id %}" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
+          </div>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+{% endblock %}

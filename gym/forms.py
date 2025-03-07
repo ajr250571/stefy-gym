@@ -5,9 +5,103 @@ from django import forms
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.utils.dateformat import format
-
-
+from django.db.models import Q, BooleanField
+from functools import reduce
+import operator
 from gym.models import Membresia, Plan, Socio, Pago
+
+
+class DynamicFilterForm(forms.Form):
+    CONDITION_CHOICES = (
+        ('exact', 'Igual a'),
+        ('icontains', 'Contiene (insensible a mayúsculas)'),
+        ('gt', 'Mayor que'),
+        ('lt', 'Menor que'),
+        ('gte', 'Mayor o igual que'),
+        ('lte', 'Menor o igual que'),
+        ('startswith', 'Comienza con'),
+        ('endswith', 'Termina con'),
+    )
+
+    BOOLEAN_CHOICES = (
+        ('', '---------'),
+        ('true', 'Sí'),
+        ('false', 'No'),
+    )
+
+    field_name = forms.ChoiceField(label='Campo')
+    condition = forms.ChoiceField(label='Condición', choices=CONDITION_CHOICES)
+    value = forms.CharField(label='Valor', required=False)
+
+    def __init__(self, model, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Generar opciones de campos basadas en el modelo
+        field_choices = [
+            (field.name, field.verbose_name or field.name)
+            for field in model._meta.fields
+            if field.concrete and not field.many_to_many
+        ]
+        self.fields['field_name'].choices = field_choices
+
+        # Obtener el modelo para inspeccionar los tipos de campos
+        self.model = model
+        self.adjust_fields_for_boolean()
+
+    def adjust_fields_for_boolean(self):
+        """Ajustar el campo 'value' según el tipo de campo seleccionado"""
+        if 'field_name' in self.data:
+            field_name = self.data['field_name']
+            field = self.model._meta.get_field(field_name)
+            if isinstance(field, BooleanField):
+                self.fields['value'] = forms.ChoiceField(
+                    choices=self.BOOLEAN_CHOICES,
+                    label='Valor',
+                    required=False,
+                    widget=forms.Select
+                )
+                # Limitar las condiciones para booleanos
+                self.fields['condition'].choices = [
+                    ('exact', 'Igual a'),
+                    ('isnull', 'Es nulo'),
+                ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        field_name = cleaned_data.get('field_name')
+        condition = cleaned_data.get('condition')
+        value = cleaned_data.get('value')
+
+        if field_name and condition:
+            field = self.model._meta.get_field(field_name)
+            if isinstance(field, BooleanField):
+                if value == 'true':
+                    cleaned_data['value'] = True
+                elif value == 'false':
+                    cleaned_data['value'] = False
+                elif value == '':
+                    cleaned_data['value'] = None
+
+        if condition and not value and condition != 'isnull':
+            raise forms.ValidationError(
+                "El valor es requerido para esta condición.")
+        return cleaned_data
+
+    def get_filter(self):
+        if self.is_valid():
+            field = self.cleaned_data['field_name']
+            condition = self.cleaned_data['condition']
+            value = self.cleaned_data['value']
+            model_field = self.model._meta.get_field(field)
+
+            if isinstance(model_field, BooleanField):
+                if condition == 'exact' and value is not None:
+                    return Q(**{field: value})
+                elif condition == 'isnull':
+                    return Q(**{f"{field}__isnull": True if value is None else False})
+            elif value:
+                filter_key = f"{field}__{condition}"
+                return Q(**{filter_key: value})
+        return Q()
 
 
 class PlanForm(forms.ModelForm):

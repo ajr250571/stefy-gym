@@ -180,7 +180,7 @@ class membresiaDetailDniView(DetailView):
     login_url = '/login/'
 
     def get_context_data(self, **kwargs):
-        kwargs['title'] = 'Detalle de Membresia'
+        kwargs['title'] = 'Detalle de Membresias'
         kwargs['crumb_url'] = reverse_lazy('home')
         kwargs['crumb_name'] = ''
         return super().get_context_data(**kwargs)
@@ -188,8 +188,8 @@ class membresiaDetailDniView(DetailView):
     def get_object(self, queryset=None):
         dni = self.kwargs['dni']
         try:
-            membresia = Membresia.objects.get(socio__dni=dni)
-            Asistencia.registrar_asistencia(membresia.socio.dni)
+            membresia = Membresia.objects.filter(socio__dni=dni)
+            Asistencia.registrar_asistencia(dni)
             return membresia
         except Exception as e:
             print(f"Error al obtener membresía: {str(e)}")

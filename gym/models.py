@@ -74,9 +74,8 @@ class Membresia(models.Model):
         ('CANCELADA', 'Cancelada'),
     ]
 
-    socio = models.OneToOneField(
-        Socio, on_delete=models.PROTECT, blank=False, null=False, verbose_name='Socio'
-    )
+    socio = models.ForeignKey(
+        Socio, on_delete=models.CASCADE, verbose_name='Socio')
     plan = models.ForeignKey(
         Plan, on_delete=models.PROTECT, blank=False, null=False, verbose_name='Plan')
     fecha_inicio = models.DateField(
@@ -245,6 +244,12 @@ class Membresia(models.Model):
         return super().save(*args, **kwargs)
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['socio', 'plan'],
+                name='unique_socio_plan'
+            )
+        ]
         verbose_name = 'Membresia'
         verbose_name_plural = 'Membresias'
         ordering = ['socio']

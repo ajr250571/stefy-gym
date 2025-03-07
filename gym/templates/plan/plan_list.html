@@ -1,7 +1,9 @@
-{% extends 'list.html' %}
+{% extends 'list_filter.html' %}
+{% load crispy_forms_tags %}
 
 {% block thead %}
   <tr>
+    <th scope="col">ID</th>
     <th scope="col">Nombre</th>
     <th scope="col">Precio</th>
     <th scope="col">Meses</th>
@@ -15,6 +17,7 @@
 {% block tbody %}
   {% for plan in object_list %}
     <tr>
+      <td>{{ plan.id }}</td>
       <td scope="row">
         <a href="{% url 'plan_detail' plan.id %}"><strong>{{ plan.nombre }}</strong></a>
       </td>

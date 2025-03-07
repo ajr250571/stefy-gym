@@ -2,60 +2,64 @@
 
 {% block content %}
   <div class="row">
-    <div class="col-md-6">
-      <div class="card mb-4">
-        <div class="card-header">
-          <h2 class="mb-0">{{ object }}</h2>
-        </div>
-        <div class="card-body">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item d-flex justify-content-between">
-              <strong>Socio:</strong>
-              <span>{{ object.socio }} ({{ object.socio.dni }})</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between">
-              <strong>Plan:</strong>
-              <span>{{ object.plan }}</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between">
-              <strong>Fecha Inicio:</strong>
-              <span>{{ object.fecha_inicio }}</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between">
-              <strong>Fecha Fin:</strong>
-              <span>{{ object.fecha_fin }}</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between">
-              <strong>Vigente:</strong>
-              {% if object.vigente %}
-                <span class="badge bg-success display-1">Si</span>
-              {% else %}
-                <span class="badge bg-danger display-1">No</span>
-              {% endif %}
-            </li>
-            <li class="list-group-item d-flex justify-content-between">
-              <strong>Dias:</strong>
-              {% if object.dias_restantes < 0 %}
-                <span class="badge bg-danger">{{ object.dias_restantes }}</span>
-              {% else %}
-                <span class="badge bg-success">{{ object.dias_restantes }}</span>
-              {% endif %}
-            </li>
-            <li class="list-group-item d-flex justify-content-between">
-              <strong>Estado:</strong>
-              {% if object.estado == 'ACTIVA' %}
-                <span class="badge bg-success">{{ object.estado }}</span>
-              {% endif %}
-              {% if object.estado == 'VENCIDA' %}
-                <span class="badge bg-danger">{{ object.estado }}</span>
-              {% endif %}
-              {% if object.estado == 'CANCELADA' %}
-                <span class="badge bg-warning">{{ object.estado }}</span>
-              {% endif %}
-            </li>
-          </ul>
+    {% for membresia in object %}
+      <div class="col-3 mb-2"> <!-- Cada tarjeta ocupa 3 columnas (3 tarjetas por fila) -->
+        <div class="card">
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item d-flex justify-content-between">
+                <strong>Socio:</strong>
+                <span>{{ membresia.socio }}</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <strong>Plan:</strong>
+                <span>{{ membresia.plan }}</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <strong>Fecha Inicio:</strong>
+                <span>{{ membresia.fecha_inicio }}</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <strong>Fecha Fin:</strong>
+                <span>{{ membresia.fecha_fin }}</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <strong>Vigente:</strong>
+                {% if membresia.vigente %}
+                  <span class="badge bg-success">Si</span>
+                {% else %}
+                  <span class="badge bg-danger">No</span>
+                {% endif %}
+              </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <strong>Dias:</strong>
+                {% if membresia.dias_restantes < 0 %}
+                  <span class="badge bg-danger">{{ membresia.dias_restantes }}</span>
+                {% else %}
+                  <span class="badge bg-success">{{ membresia.dias_restantes }}</span>
+                {% endif %}
+              </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <strong>Estado:</strong>
+                {% if membresia.estado == 'ACTIVA' %}
+                  <span class="badge bg-success">{{ membresia.estado }}</span>
+                {% endif %}
+                {% if membresia.estado == 'VENCIDA' %}
+                  <span class="badge bg-danger">{{ membresia.estado }}</span>
+                {% endif %}
+                {% if membresia.estado == 'CANCELADA' %}
+                  <span class="badge bg-warning">{{ membresia.estado }}</span>
+                {% endif %}
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
+
+      <!-- Cerrar y abrir filas cada 3 tarjetas -->
+      {% if forloop.counter|divisibleby:3 and not forloop.last %}
+        </div><div class="row">
+      {% endif %}
+    {% endfor %}
   </div>
 {% endblock %}

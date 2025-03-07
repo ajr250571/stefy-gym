@@ -3,13 +3,61 @@ from django.utils import timezone
 from django.db.models.base import Model as Model
 from django.shortcuts import get_object_or_404, redirect, render
 from gym.models import Asistencia, Membresia
-from django.views.generic import View
+from django.views.generic import View, ListView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib import messages
 from django.db.models import Count, F, Value
 from django.db.models.functions import Concat
 from ..filters import AsistenciaFilter
 from django_filters.views import FilterView
+from django.http import QueryDict
+from ..forms import DynamicFilterForm
+from functools import reduce
+import operator
+
+
+class AdvancedFilterListView(ListView):
+    template_name = ''
+    paginate_by = 20
+    model = None  # Especificar en la implementación concreta
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        filters = self.request.GET.getlist('filters')
+
+        if filters:
+            q_objects = []
+            for filter_data in filters:
+                if isinstance(filter_data, str):
+                    filter_dict = QueryDict(filter_data)
+                else:
+                    filter_dict = filter_data
+                form = DynamicFilterForm(self.model, data=filter_dict)
+                if form.is_valid():
+                    q_objects.append(form.get_filter())
+
+            if q_objects:
+                queryset = queryset.filter(reduce(operator.and_, q_objects))
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = DynamicFilterForm(self.model)
+
+        current_filters = []
+        filters = self.request.GET.getlist('filters')
+        for filter_data in filters:
+            if isinstance(filter_data, str):
+                filter_dict = QueryDict(filter_data)
+            else:
+                filter_dict = filter_data
+            filter_form = DynamicFilterForm(self.model, data=filter_dict)
+            if filter_form.is_valid():
+                current_filters.append(filter_form)
+
+        context['current_filters'] = current_filters
+        return context
 
 
 class enviar_whatsapp(View):

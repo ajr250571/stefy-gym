@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block extracss %}
+  <link rel="stylesheet" href="{% static 'lib/datatables/css/dataTables.bootstrap4.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'lib/datatables/plugins/responsive-2.2.3/css/responsive.bootstrap4.min.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <button class="btn btn-info mb-4" type="button" data-toggle="collapse" data-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter"><i class="fas fa-filter"></i> Filtrar</button>
+  <div class="collapse" id="collapseFilter">
+    <div class="card card-body">
+      <!-- Filtros actuales -->
+      {% if current_filters %}
+        <form class="form-inline" method="get" id="current-filters-form" action="">
+          {% for filter_form in current_filters %}
+            <div class="form-inline filter-row" data-filter-id="{{ forloop.counter0 }}">
+              {{ filter_form.field_name|as_crispy_field }}
+              {{ filter_form.condition|as_crispy_field }}
+              {{ filter_form.value|as_crispy_field }}
+
+              <input type="hidden" name="filters" value="{{ filter_form.data.urlencode }}" />
+              <button type="button" class="remove-filter btn btn-warning ml-2" data-filter-id="{{ forloop.counter0 }}">Eliminar</button>
+            </div>
+          {% endfor %}
+
+          <button style="display: none;" class="btn btn-info ml-4" type="submit">Actualizar</button>
+        </form>
+      {% else %}
+        <p>No hay filtros aplicados.</p>
+      {% endif %}
+
+      <!-- Nuevo filtro -->
+      <h5 class="mt-4">Agregar Filtro</h5>
+      <form class="form-inline" method="get" id="add-filter-form" action="">
+        {% csrf_token %}
+
+        {{ filter_form|crispy }}
+        <!-- Añadir el nuevo filtro como parte de filters -->
+        <input type="hidden" name="filters" value="field_name={{ filter_form.data.field_name }}&condition={{ filter_form.data.condition }}&value={{ filter_form.data.value }}" />
+
+        {% if current_filters %}
+          {% for filter_form in current_filters %}
+            <input type="hidden" name="filters" value="{{ filter_form.data.urlencode }}" />
+          {% endfor %}
+        {% endif %}
+        <button class="btn btn-info ml-2" type="submit">Añadir</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table id="datos" class="table table-striped table-bordered table-sm">
+      <thead>
+        {% block thead %}
+
+        {% endblock %}
+      </thead>
+      <tbody>
+        {% block tbody %}
+
+        {% endblock %}
+      </tbody>
+    </table>
+    {% if create_url %}
+      <a href="{{ create_url }}" class="btn btn-primary">Agregar</a>
+    {% endif %}
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Manejar añadir filtro
+      const addFilterForm = document.getElementById('add-filter-form')
+      addFilterForm.addEventListener('submit', function (event) {
+        const fieldName = this.querySelector('select[name="field_name"]').value
+        const condition = this.querySelector('select[name="condition"]').value
+        const value = this.querySelector('input[name="value"]').value
+    
+        const hiddenInput = this.querySelector('input[name="filters"][value^="field_name="]')
+        hiddenInput.value = `field_name=${fieldName}&condition=${condition}&value=${value}`
+        console.log('Filtros enviados:', new URLSearchParams(new FormData(this)).toString())
+      })
+    
+      // Manejar eliminación de filtros
+      const removeButtons = document.querySelectorAll('.remove-filter')
+      removeButtons.forEach((button) => {
+        button.addEventListener('click', function () {
+          const filterId = this.getAttribute('data-filter-id')
+          const filterRow = document.querySelector(`.filter-row[data-filter-id="${filterId}"]`)
+          const hiddenInput = filterRow.querySelector('input[name="filters"]')
+          hiddenInput.remove()
+          filterRow.remove()
+    
+          // Enviar el formulario automáticamente tras eliminar, siempre
+          const currentFiltersForm = document.getElementById('current-filters-form')
+          if (currentFiltersForm) {
+            currentFiltersForm.submit()
+          } else {
+            // Si no hay formulario (todos los filtros eliminados), recargar la página sin filtros
+            window.location.href = window.location.pathname
+          }
+        })
+      })
+    })
+  </script>
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{% static 'lib/datatables/js/jquery.dataTables.js' %}"></script>
+  <script src="{% static 'lib/datatables/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'lib/datatables/plugins/responsive-2.2.3/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'lib/datatables/plugins/responsive-2.2.3/js/responsive.bootstrap4.min.js' %}"></script>
+  <script>
+    $(function () {
+      $('#datos').DataTable({
+        responsive: true,
+        autoWidth: false,
+        language: {
+          url: "{% static '/lib/datatables/spanish.txt' %}"
+        }
+      })
+    })
+  </script>
+{% endblock %}
